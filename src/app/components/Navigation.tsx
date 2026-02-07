@@ -2,7 +2,6 @@ import { LayoutDashboard, FileText, CheckSquare, BarChart3, LogOut, Plus, HelpCi
 import { Button } from './ui/button';
 import { useState } from 'react';
 import type { User } from '../../types';
-import logo from 'figma:asset/cf4f57df61ded9eb3b389ccb2425afdcf59d161c.png';
 
 interface NavigationProps {
   currentView: string;
@@ -38,11 +37,7 @@ export function Navigation({ currentView, onNavigate, user, onLogout, onHelp }: 
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3 sm:space-x-8">
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <img 
-                  src={logo} 
-                  alt="Óticas Carol" 
-                  className="h-10 sm:h-14 w-auto"
-                />
+                <div className="text-3xl">👓</div>
                 <div className="hidden lg:block border-l border-gray-300 h-10 mx-2"></div>
                 <div className="hidden sm:block">
                   <p className="text-xs text-gray-500 font-medium">Sistema de Controle</p>

@@ -5,7 +5,6 @@ import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { auth } from '../../lib/api';
 import type { User } from '../../types';
-import logo from 'figma:asset/cf4f57df61ded9eb3b389ccb2425afdcf59d161c.png';
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -38,11 +37,8 @@ export function Login({ onLogin }: LoginProps) {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-6 w-full max-w-xs">
-            <img 
-              src={logo} 
-              alt="Óticas Carol" 
-              className="w-full h-auto"
-            />
+            <div className="text-5xl font-bold text-blue-600 mb-2">👓</div>
+            <h1 className="text-3xl font-bold text-gray-900">Óticas Carol</h1>
           </div>
           <CardTitle className="text-2xl text-gray-900">Sistema de Controle Operacional</CardTitle>
           <CardDescription>Faça login para acessar o sistema</CardDescription>
