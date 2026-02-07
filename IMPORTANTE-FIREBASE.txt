@@ -1,0 +1,41 @@
+⚠️ IMPORTANTE: CONFIGURAÇÃO DO FIREBASE ⚠️
+
+Este projeto usa Firebase Cloud Messaging para notificações push.
+
+Os arquivos de configuração do Firebase NÃO estão no repositório por segurança.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📱 PARA ANDROID:
+Você precisa baixar o arquivo google-services.json
+
+1. Acesse: https://console.firebase.google.com/
+2. Projeto: "Óticas Carol" (ID: 30569876119)
+3. Project Settings > Your apps > Android
+4. Baixe: google-services.json
+5. Coloque em: android/app/google-services.json
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🍎 PARA iOS:
+Você precisa baixar o arquivo GoogleService-Info.plist
+
+1. Acesse: https://console.firebase.google.com/
+2. Projeto: "Óticas Carol" (ID: 30569876119)
+3. Project Settings > Your apps > iOS
+4. Baixe: GoogleService-Info.plist
+5. Coloque em: ios/App/GoogleService-Info.plist
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔑 FIREBASE SERVER KEY:
+Já está configurada no Supabase como variável de ambiente:
+- Nome: FIREBASE_SERVER_KEY
+- Valor: (já configurado ✅)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 LEIA O GUIA COMPLETO:
+Veja o arquivo BUILD-ANDROID.md para instruções detalhadas.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

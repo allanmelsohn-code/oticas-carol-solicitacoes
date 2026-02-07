@@ -1,187 +1,310 @@
-# Sistema de Controle Operacional - Óticas Carol
+# 🏢 Óticas Carol - Sistema de Gestão de Franquias
 
-Dashboard administrativo para controle operacional e financeiro das franquias Óticas Carol, com foco em solicitações de serviços, aprovação centralizada e conciliação mensal por loja.
-
-## 🚀 Início Rápido
-
-### 1. Acesse a Configuração Inicial
-
-Na tela de login, clique em **"Primeira vez? Configure o sistema aqui"** ou acesse diretamente com `?setup=true` na URL.
-
-### 2. Configuração Automática
-
-1. Clique em **"Criar Usuários Padrão"** para criar:
-   - **Administrador**: `admin@oticascarol.com` / `admin123`
-   - **Chris**: `chris@oticascarol.com` / `chris123`
-
-2. Na seção **"Criar Lojas"**, faça login com o usuário admin
-
-3. Clique em **"Criar Lojas Padrão"** para criar:
-   - OC001 - Óticas Carol Shopping Center
-   - OC002 - Óticas Carol Centro
-   - OC003 - Óticas Carol Norte
-   - OC004 - Óticas Carol Sul
-
-4. Clique em **"Ir para Login"** e faça login com admin@oticascarol.com
-
-### 3. Comece a Usar
-
-Agora você pode:
-- ✅ Criar solicitações de serviço
-- ✅ Aprovar/reprovar solicitações
-- ✅ Visualizar dashboard com estatísticas
-- ✅ Gerar relatórios mensais
-- ✅ Exportar dados em PDF e Excel
-
-## 👥 Perfis de Usuário
-
-### 🏪 Loja (Franqueado / Funcionário)
-- Criar novas solicitações (Montagem ou Motoboy)
-- Visualizar histórico de solicitações
-- Acompanhar status de aprovação
-- Ver detalhes de cada solicitação
-
-### ✅ Aprovador (Administrador e Chris)
-- Aprovar ou reprovar solicitações
-- Adicionar observações
-- Visualizar todas as solicitações do sistema
-- Acessar dashboard com estatísticas gerais
-- Gerar relatórios financeiros mensais
-- Criar novas lojas
-- Exportar dados em PDF/Excel
-
-### 👀 Visualizador
-- Visualizar dashboard
-- Acessar relatórios financeiros
-- Exportar dados
-
-## 📋 Funcionalidades
-
-### 1. Solicitação de Pedido (Loja)
-
-Formulário completo com:
-- Loja (dropdown com código e nome)
-- Solicitante (nome do responsável)
-- Tipo de solicitação (Montagem ou Entrega Motoboy)
-- Justificativa (campo texto)
-- Valor do serviço (R$)
-- Data da solicitação
-- Número da OS
-- Cobrado do cliente? (Sim/Não - toggle)
-
-Status inicial: **Pendente de aprovação**
-
-### 2. Aprovação de Solicitações
-
-Painel exclusivo para aprovadores com:
-- Lista de solicitações pendentes
-- Informações completas de cada solicitação
-- Ações: Aprovar / Reprovar / Visualizar Detalhes
-- Campo obrigatório de observação para reprovação
-- Histórico de solicitações processadas
-
-### 3. Extrato Mensal por Loja
-
-Relatório financeiro com:
-
-**Filtros:**
-- Loja
-- Mês / Ano
-- Tipo de serviço (Montagem / Motoboy)
-
-**Totais Automáticos:**
-- Total geral
-- Total cobrado do cliente
-- Total não cobrado
-- Total por tipo de serviço (Montagem / Motoboy)
-
-**Exportação:**
-- PDF (formato profissional)
-- Excel (CSV)
-
-### 4. Dashboard
-
-Visão geral com:
-- Total de solicitações
-- Solicitações pendentes
-- Solicitações aprovadas
-- Solicitações reprovadas
-- Estatísticas do mês atual
-- Valor total mensal
-
-## 🎨 Interface
-
-- Design clean, corporativo e profissional
-- Layout responsivo (desktop e mobile)
-- Cores neutras com destaque para status
-- Componentes reutilizáveis
-- Navegação intuitiva
-- Feedback visual para todas as ações
-
-## 📊 Fluxo de Uso
-
-1. **Loja** acessa o sistema e cria nova solicitação
-2. Solicitação fica com status "Pendente"
-3. **Aprovador** visualiza no painel de aprovações
-4. **Aprovador** analisa e aprova ou reprova
-5. **Loja** vê o status atualizado
-6. No fim do mês, **Aprovador** gera extrato para conciliação
-7. Relatório pode ser exportado em PDF ou Excel
-
-## 🔐 Segurança
-
-- Autenticação via Supabase
-- Controle de acesso por perfil
-- Rotas protegidas no backend
-- Validação de permissões em cada ação
-
-## ⚠️ Importante
-
-Este sistema foi criado no Figma Make e **não é destinado a coletar informações pessoais sensíveis (PII) ou proteger dados críticos de negócio**. Para uso em produção com dados financeiros reais, recomendamos:
-
-1. Revisão de segurança adicional
-2. Implementação de auditoria
-3. Backup automático de dados
-4. SSL/TLS certificado
-5. Monitoramento de acessos
-
-## 💡 Dicas de Uso
-
-### Criar Usuários de Loja
-
-Após criar as lojas, você pode criar usuários vinculados a cada loja:
-
-1. Na tela de Setup, em "Criar Usuário Manualmente"
-2. Preencha nome, email, senha
-3. Selecione perfil "Loja"
-4. O usuário será vinculado à loja
-
-### Conciliação Mensal
-
-1. Acesse "Extrato Mensal"
-2. Selecione o mês/ano
-3. Escolha a loja (ou todas)
-4. Filtre por tipo de serviço se necessário
-5. Confira os totais
-6. Exporte em PDF para enviar ao laboratório/motoboy
-7. Exporte em Excel para análise interna
-
-## 🛠️ Tecnologias
-
-- **Frontend**: React + TypeScript
-- **Estilo**: Tailwind CSS v4
-- **Backend**: Supabase (Edge Functions + Auth + Database)
-- **Servidor**: Hono (Deno)
-- **Exportação**: jsPDF + jspdf-autotable
-- **Ícones**: Lucide React
-
-## 📞 Suporte
-
-Para dúvidas sobre o sistema:
-1. Verifique este README
-2. Consulte o arquivo SETUP.md
-3. Revise os logs no console do navegador (F12)
+Sistema web completo (dashboard administrativo) para controle operacional e financeiro das franquias Óticas Carol, com foco em solicitações de serviços, aprovação centralizada e conciliação mensal por loja.
 
 ---
 
-**Sistema desenvolvido para Óticas Carol** 👓
+## 📱 **NOVIDADE: APP MOBILE NATIVO!**
+
+O sistema agora está disponível como **aplicativo nativo** para iOS e Android com **notificações push em tempo real** via Firebase Cloud Messaging!
+
+---
+
+## ✨ Funcionalidades
+
+### 👥 **3 Perfis de Usuários:**
+- **Loja:** Criar solicitações e visualizar status
+- **Aprovadores:** Aprovar/reprovar solicitações (Allan e Chris)
+- **Visualização Financeira:** Acesso ao extrato mensal
+
+### 📋 **Módulos Principais:**
+- ✅ **Solicitação de Pedidos:** Montagem/Motoboy com valores e observações
+- ✅ **Aprovação de Solicitações:** Sistema de aprovação centralizado com notificações
+- ✅ **Extrato Mensal por Loja:** Exportação em PDF/Excel
+- ✅ **Notificações Push:** Notificações em tempo real no app mobile
+
+### 🎨 **Interface:**
+- Design clean, corporativo e profissional
+- Dashboard responsivo
+- Cores neutras e componentes reutilizáveis
+- Pensada para uso diário e rápido
+
+---
+
+## 🚀 Tecnologias
+
+### **Frontend:**
+- React 18.3
+- TypeScript
+- Tailwind CSS v4
+- Vite
+- Material UI
+- Recharts (gráficos)
+- jsPDF (exportação PDF)
+
+### **Mobile:**
+- Capacitor 8
+- Firebase Cloud Messaging (FCM)
+- Push Notifications
+- iOS & Android
+
+### **Backend:**
+- Supabase (Database + Edge Functions)
+- Hono (Web Server)
+- Firebase Cloud Messaging
+- Key-Value Store
+
+---
+
+## 📦 Instalação
+
+### **1. Clonar repositório:**
+```bash
+git clone <seu-repositorio>
+cd oticas-carol-app
+```
+
+### **2. Instalar dependências:**
+```bash
+npm install
+```
+
+### **3. Executar em desenvolvimento:**
+```bash
+npm run dev
+```
+
+### **4. Build para produção:**
+```bash
+npm run build
+```
+
+---
+
+## 📱 BUILD PARA MOBILE
+
+### **🤖 Android:**
+Veja instruções completas em: **[BUILD-ANDROID.md](./BUILD-ANDROID.md)**
+
+**Resumo:**
+```bash
+# 1. Build web
+npm run build
+
+# 2. Sync Capacitor
+npx cap sync android
+
+# 3. Gerar APK
+cd android
+./gradlew assembleDebug
+cd ..
+```
+
+**⚠️ IMPORTANTE:** Você precisa do arquivo `google-services.json` do Firebase!  
+Veja: **[IMPORTANTE-FIREBASE.txt](./IMPORTANTE-FIREBASE.txt)**
+
+### **🍎 iOS:**
+```bash
+npx cap add ios
+npx cap sync ios
+npx cap open ios
+```
+
+Build no Xcode.
+
+**⚠️ IMPORTANTE:** Você precisa do arquivo `GoogleService-Info.plist` do Firebase!
+
+---
+
+## 🔔 Notificações Push
+
+O sistema possui notificações push nativas funcionais:
+
+### **Eventos que geram notificações:**
+1. **Nova solicitação criada** → Notifica aprovadores
+2. **Solicitação aprovada** → Notifica a loja
+3. **Solicitação reprovada** → Notifica a loja com motivo
+
+### **Como funciona:**
+1. Usuário abre o app e faz login
+2. App solicita permissão de notificações
+3. Token FCM é registrado no backend
+4. Notificações chegam em tempo real!
+
+### **Arquivos importantes:**
+- `/src/lib/pushNotifications.ts` - Gerenciamento de push notifications
+- `/supabase/functions/server/fcm.ts` - Backend FCM
+- `/supabase/functions/server/index.tsx` - Rotas do servidor
+
+---
+
+## 🔐 Autenticação
+
+Sistema de autenticação simples com usuários fixos:
+
+### **Usuários padrão:**
+- **Allan:** allan@oticascarol.com.br (Aprovador)
+- **Chris:** chris@oticascarol.com.br (Aprovador)
+- **Lojas:** Cada loja tem seu próprio usuário
+
+---
+
+## 🗂️ Estrutura do Projeto
+
+```
+oticas-carol-app/
+├── src/
+│   ├── app/
+│   │   ├── App.tsx                    # Componente principal
+│   │   └── components/                # Componentes React
+│   ├── lib/
+│   │   └── pushNotifications.ts       # Push notifications mobile
+│   ├── styles/
+│   │   ├── theme.css                  # Variáveis CSS
+│   │   └── fonts.css                  # Fontes
+│   └── utils/
+│       └── supabase/                  # Config Supabase
+├── supabase/
+│   └── functions/
+│       └── server/
+│           ├── index.tsx              # Servidor Hono
+│           ├── fcm.ts                 # Firebase Cloud Messaging
+│           ├── kv_store.tsx           # Key-Value Store
+│           └── types.ts               # TypeScript types
+├── android/                           # Projeto Android (gerado)
+├── ios/                              # Projeto iOS (gerado)
+├── capacitor.config.ts               # Config Capacitor
+├── BUILD-ANDROID.md                  # Guia build Android
+├── IMPORTANTE-FIREBASE.txt           # Config Firebase
+└── package.json
+```
+
+---
+
+## 🔧 Variáveis de Ambiente (Supabase)
+
+Configuradas automaticamente no Supabase:
+
+- `SUPABASE_URL` - URL do projeto Supabase
+- `SUPABASE_ANON_KEY` - Chave pública
+- `SUPABASE_SERVICE_ROLE_KEY` - Chave privada (backend only)
+- `FIREBASE_SERVER_KEY` - Server key do Firebase (para push notifications)
+
+---
+
+## 📊 Banco de Dados
+
+O sistema usa uma **tabela Key-Value** (`kv_store_b2c42f95`) para armazenar:
+- Usuários
+- Lojas
+- Solicitações (requests)
+- Tokens FCM (notificações)
+- Sessões
+
+---
+
+## 🎯 Fluxo de Uso
+
+### **Como Loja:**
+1. Login → Dashboard
+2. Criar nova solicitação (Montagem/Motoboy)
+3. Aguardar aprovação
+4. Receber notificação de aprovação/reprovação
+
+### **Como Aprovador:**
+1. Login → Dashboard
+2. Ver solicitações pendentes
+3. Receber notificação de novas solicitações
+4. Aprovar ou reprovar com observações
+
+### **Visualização Financeira:**
+1. Login → Extrato Mensal
+2. Filtrar por loja e período
+3. Exportar PDF/Excel
+
+---
+
+## 📱 Distribuição do App
+
+### **Desenvolvimento (Debug):**
+- APK gerado em: `android/app/build/outputs/apk/debug/app-debug.apk`
+- Pode ser instalado direto no celular
+- **Não** é aceito na Google Play Store
+
+### **Produção (Release):**
+```bash
+cd android
+./gradlew assembleRelease
+cd ..
+```
+
+- APK gerado em: `android/app/build/outputs/apk/release/`
+- Precisa ser **assinado** com keystore
+- Pode ser publicado na Google Play Store
+
+---
+
+## 🐛 Troubleshooting
+
+### **Notificações não chegam:**
+1. Verificar se `google-services.json` está em `android/app/`
+2. Verificar se `FIREBASE_SERVER_KEY` está configurado no Supabase
+3. Verificar permissão de notificações no celular
+4. Verificar logs no Supabase: Dashboard > Edge Functions > server > Logs
+
+### **Erro ao gerar APK:**
+1. Verificar Java JDK 17+ instalado: `java -version`
+2. Limpar build: `cd android && ./gradlew clean && cd ..`
+3. Sync novamente: `npx cap sync android`
+
+### **App não abre:**
+1. Verificar logs: `adb logcat`
+2. Verificar build: `npm run build`
+3. Sync: `npx cap sync android`
+
+---
+
+## 📚 Documentação Adicional
+
+- **[BUILD-ANDROID.md](./BUILD-ANDROID.md)** - Guia completo de build Android
+- **[IMPORTANTE-FIREBASE.txt](./IMPORTANTE-FIREBASE.txt)** - Configuração Firebase
+- **[Capacitor Docs](https://capacitorjs.com/)** - Documentação oficial Capacitor
+- **[Firebase FCM Docs](https://firebase.google.com/docs/cloud-messaging)** - Firebase Cloud Messaging
+
+---
+
+## 👨‍💻 Desenvolvimento
+
+### **Adicionar nova funcionalidade:**
+1. Criar componente em `/src/app/components/`
+2. Importar e usar em `App.tsx`
+3. Se precisar backend, adicionar rota em `/supabase/functions/server/index.tsx`
+
+### **Testar no mobile:**
+```bash
+npm run build
+npx cap sync android
+npx cap run android
+```
+
+---
+
+## 📄 Licença
+
+Proprietário - Óticas Carol © 2026
+
+---
+
+## 🆘 Suporte
+
+Para dúvidas ou problemas:
+- Verificar documentação em `BUILD-ANDROID.md`
+- Verificar logs do Supabase
+- Verificar console do navegador/adb logcat
+
+---
+
+**Desenvolvido com ❤️ para Óticas Carol**
+
+**Versão:** 1.0.0  
+**Data:** Fevereiro 2026

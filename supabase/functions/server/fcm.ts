@@ -5,7 +5,7 @@ import * as kv from './kv_store.tsx';
 
 // FCM Server Key - deve ser configurado nas variáveis de ambiente
 // Obtenha em: Firebase Console > Project Settings > Cloud Messaging > Server Key
-const FCM_SERVER_KEY = Deno.env.get('FCM_SERVER_KEY') || '';
+const FCM_SERVER_KEY = Deno.env.get('FIREBASE_SERVER_KEY') || '';
 
 interface FCMToken {
   userId: string;

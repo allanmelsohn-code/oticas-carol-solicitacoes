@@ -1,6 +1,30 @@
 // Native Push Notifications for Mobile App (iOS & Android)
-import { PushNotifications, Token, ActionPerformed, PushNotificationSchema } from '@capacitor/push-notifications';
+import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
+
+// Types
+interface Token {
+  value: string;
+}
+
+interface PushNotificationSchema {
+  title?: string;
+  body?: string;
+  id: string;
+  badge?: number;
+  notification?: any;
+  data?: any;
+  click_action?: string;
+  link?: string;
+  group?: string;
+  groupSummary?: boolean;
+}
+
+interface ActionPerformed {
+  actionId: string;
+  inputValue?: string;
+  notification: PushNotificationSchema;
+}
 
 // Check if running on native platform
 export const isNativePlatform = (): boolean => {
