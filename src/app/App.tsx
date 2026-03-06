@@ -12,6 +12,8 @@ import { Help } from './components/Help';
 import { auth, getSessionId, clearSessionId } from '../lib/api';
 import { initializePushNotifications, setupPushListeners } from '../lib/pushNotifications';
 import type { User } from '../types';
+import { AuditLog } from './components/AuditLog';
+import { PendingReport } from './components/PendingReport';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -110,8 +112,10 @@ export default function App() {
         {currentView === 'approvals' && <ApprovalPanel />}
         {currentView === 'report' && <MonthlyReport />}
         {currentView === 'requests' && <RequestsList statusFilter={statusFilter} />}
-        {currentView === 'user-admin' && <UserAdmin />}
-        {currentView === 'notifications' && <NotificationSettings />}
+       {currentView === 'user-admin' && <UserAdmin />}
+{currentView === 'notifications' && <NotificationSettings />}
+{currentView === 'audit' && <AuditLog />}
+{currentView === 'pending' && <PendingReport />}
       </main>
 
       {showHelp && <Help onClose={() => setShowHelp(false)} />}

@@ -615,6 +615,120 @@ app.get('/stats', async (c) => {
   }
 });
 
+// ===== AUDIT LOG ROUTES =====
+
+app.post('/audit', async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user) return c.json({ error: 'Não autenticado' }, 401);
+
+    const { action, targetType, targetId, details } = await c.req.json();
+    if (!action || !targetType) {
+      return c.json({ error: 'action e targetType são obrigatórios' }, 400);
+    }
+
+    const auditId = crypto.randomUUID();
+    const auditEntry = {
+      id: auditId,
+      userId: user.id,
+      userEmail: user.email,
+      userName: user.name,
+      action,
+      targetType,
+      targetId: targetId || null,
+      details: details || null,
+      timestamp: new Date().toISOString(),
+    };
+
+    await kv.set(`audit:${auditId}`, auditEntry);
+    return c.json({ success: true, audit: auditEntry });
+  } catch (error) {
+    console.error('[audit POST] Erro:', error);
+    return c.json({ error: 'Falha ao registrar auditoria' }, 500);
+  }
+});
+
+app.get('/audit', async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user || user.role !== 'approver') {
+      return c.json({ error: 'Acesso negado' }, 403);
+    }
+
+    const targetType = c.req.query('targetType');
+    const targetId = c.req.query('targetId');
+    const limit = parseInt(c.req.query('limit') || '100');
+
+    let entries = await kv.getByPrefix('audit:');
+
+    if (targetType) entries = entries.filter((e: any) => e.targetType === targetType);
+    if (targetId) entries = entries.filter((e: any) => e.targetId === targetId);
+
+    entries.sort((a: any, b: any) =>
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+
+    return c.json({ audit: entries.slice(0, limit) });
+  } catch (error) {
+    console.error('[audit GET] Erro:', error);
+    return c.json({ error: 'Falha ao buscar auditoria' }, 500);
+  }
+});
+
+// ===== PENDING REPORT ROUTE =====
+
+app.get('/reports/pending', async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user) return c.json({ error: 'Não autenticado' }, 401);
+    if (user.role !== 'approver') return c.json({ error: 'Acesso negado' }, 403);
+
+    let requests = await kv.getByPrefix('request:');
+    requests = requests.filter((r: Request) => r.status === 'pending');
+
+    const stores = await kv.getByPrefix('store:');
+    const storeMap = new Map(stores.map((s: any) => [s.id, s]));
+
+    const byStore: Record<string, any> = {};
+    for (const r of requests) {
+      const storeId = r.storeId;
+      if (!byStore[storeId]) {
+        const store = storeMap.get(storeId) as any;
+        byStore[storeId] = {
+          storeId,
+          storeName: r.storeName || (store ? `${store.code} - ${store.name}` : storeId),
+          storeCode: store?.code || '',
+          count: 0,
+          totalValue: 0,
+          oldestDate: r.createdAt,
+          requests: [],
+        };
+      }
+      byStore[storeId].count++;
+      byStore[storeId].totalValue += r.value;
+      byStore[storeId].requests.push(r);
+      if (new Date(r.createdAt) < new Date(byStore[storeId].oldestDate)) {
+        byStore[storeId].oldestDate = r.createdAt;
+      }
+    }
+
+    const summary = Object.values(byStore).sort((a: any, b: any) =>
+      new Date(a.oldestDate).getTime() - new Date(b.oldestDate).getTime()
+    );
+
+    const totals = {
+      totalPending: requests.length,
+      totalValue: requests.reduce((s: number, r: Request) => s + r.value, 0),
+      storesWithPending: summary.length,
+    };
+
+    return c.json({ summary, totals, requests });
+  } catch (error) {
+    console.error('[reports/pending GET] Erro:', error);
+    return c.json({ error: 'Falha ao gerar relatório de pendências' }, 500);
+  }
+});
+
 // ===== ADMIN ROUTES =====
 
 app.post('/admin/clear-requests', async (c) => {
@@ -781,4 +895,8 @@ app.post('/remove-fcm-token', async (c) => {
   }
 });
 
-Deno.serve(app.fetch);
+Deno.serve((req) => {
+  const url = new URL(req.url);
+  url.pathname = url.pathname.replace('/make-server-b2c42f95', '') || '/';
+  return app.fetch(new Request(url.toString(), req));
+});

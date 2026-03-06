@@ -24,7 +24,7 @@ export function clearSessionId() {
   console.log('🗑️  Session cleared');
 }
 
-async function apiCall(endpoint: string, options: RequestInit = {}) {
+export async function apiCall(endpoint: string, options: RequestInit = {}) {
   const sid = getSessionId();
   
   const headers: HeadersInit = {

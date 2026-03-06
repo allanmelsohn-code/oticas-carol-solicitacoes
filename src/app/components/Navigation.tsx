@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText, CheckSquare, BarChart3, LogOut, Plus, HelpCircle, Users, Menu, X, Bell } from 'lucide-react';
+import { LayoutDashboard, FileText, CheckSquare, BarChart3, LogOut, Plus, HelpCircle, Users, Menu, X, Bell, Shield, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState } from 'react';
 import type { User } from '../../types';
@@ -15,13 +15,15 @@ export function Navigation({ currentView, onNavigate, user, onLogout, onHelp }: 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['store', 'approver', 'viewer'] },
-    { id: 'new-request', label: 'Nova Solicitação', icon: Plus, roles: ['store'] },
-    { id: 'approvals', label: 'Aprovações', icon: CheckSquare, roles: ['approver'] },
-    { id: 'report', label: 'Extrato Mensal', icon: BarChart3, roles: ['approver', 'viewer'] },
-    { id: 'requests', label: 'Minhas Solicitações', icon: FileText, roles: ['store'] },
-    { id: 'user-admin', label: 'Usuários', icon: Users, roles: ['approver'] },
-  ];
+  { id: 'dashboard',     label: 'Dashboard',           icon: LayoutDashboard, roles: ['store', 'approver', 'viewer'] },
+  { id: 'new-request',   label: 'Nova Solicitação',     icon: Plus,            roles: ['store'] },
+  { id: 'approvals',     label: 'Aprovações',           icon: CheckSquare,     roles: ['approver'] },
+  { id: 'pending',       label: 'Pendências',           icon: Clock,           roles: ['approver'] },
+  { id: 'report',        label: 'Extrato Mensal',       icon: BarChart3,       roles: ['approver', 'viewer'] },
+  { id: 'requests',      label: 'Minhas Solicitações',  icon: FileText,        roles: ['store'] },
+  { id: 'user-admin',    label: 'Usuários',             icon: Users,           roles: ['approver'] },
+  { id: 'audit',         label: 'Auditoria',            icon: Shield,          roles: ['approver'] },
+];
 
   const visibleItems = menuItems.filter(item => item.roles.includes(user.role));
   
