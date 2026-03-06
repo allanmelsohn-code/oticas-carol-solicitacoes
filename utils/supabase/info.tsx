@@ -1,2 +1,3 @@
-export const projectId = "myuxgszvueycsutgojnp"
-export const publicAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15dXhnc3p2dWV5Y3N1dGdvam5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4OTA1NzQsImV4cCI6MjA4NTQ2NjU3NH0.ev9H4Ag9vk0fDC4pxz1B_l_5uZJmXbaMONqyFenm3jY"
+export const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+export const publicAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+export const functionName = import.meta.env.VITE_FUNCTION_NAME;
