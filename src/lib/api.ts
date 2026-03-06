@@ -2,7 +2,7 @@
 import { projectId, publicAnonKey } from '/utils/supabase/info';
 import type { User, Request, Store, Stats } from '../types';
 
-const API_BASE = `https://${projectId}.supabase.co/functions/v1/server`;
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-b2c42f95`;
 
 let sessionId: string | null = null;
 
