@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Login } from './components/Login';
-import { Setup } from './components/Setup';
 import { Navigation } from './components/Navigation';
 import { Dashboard } from './components/Dashboard';
 import { NewRequest } from './components/NewRequest';
@@ -19,16 +18,10 @@ export default function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
-  const [showSetup, setShowSetup] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     checkAuth();
-    // Check if setup should be shown (in URL params)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('setup') === 'true') {
-      setShowSetup(true);
-    }
   }, []);
 
   const checkAuth = async () => {
@@ -95,10 +88,6 @@ export default function App() {
         <div className="text-gray-500">Carregando...</div>
       </div>
     );
-  }
-
-  if (showSetup) {
-    return <Setup />;
   }
 
   if (!user) {
