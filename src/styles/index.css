@@ -1,0 +1,126 @@
+/* ===== TAILWIND CSS V4 IMPORT ===== */
+@import 'tailwindcss';
+
+/* ===== FONTS ===== */
+@import './fonts.css';
+
+/* ===== CUSTOM THEME ===== */
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  
+  html {
+    @apply h-full;
+  }
+  
+  body {
+    @apply h-full bg-white text-gray-900 antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+  
+  #root {
+    @apply h-full;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl leading-tight;
+  }
+  
+  h2 {
+    @apply text-3xl leading-tight;
+  }
+  
+  h3 {
+    @apply text-2xl leading-snug;
+  }
+  
+  h4 {
+    @apply text-xl leading-snug;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@layer utilities {
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Animation keyframes */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes zoom-in {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Animation classes */
+  .animate-in {
+    animation-duration: 200ms;
+    animation-fill-mode: both;
+  }
+  
+  .fade-in {
+    animation-name: fade-in;
+  }
+  
+  .slide-up {
+    animation-name: slide-up;
+  }
+  
+  .zoom-in-95 {
+    animation-name: zoom-in;
+  }
+  
+  /* Duration modifiers */
+  .duration-100 {
+    animation-duration: 100ms;
+  }
+  
+  .duration-200 {
+    animation-duration: 200ms;
+  }
+  
+  .duration-300 {
+    animation-duration: 300ms;
+  }
+}

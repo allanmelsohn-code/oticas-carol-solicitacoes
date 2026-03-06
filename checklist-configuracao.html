@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist de Configuração - Óticas Carol</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: #4ade80;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .checklist {
+            list-style: none;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f9fafb;
+            border: 2px solid transparent;
+        }
+        
+        .checklist-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .checklist-item.completed {
+            background: #ecfdf5;
+            border-color: #4ade80;
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            margin-right: 16px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .checklist-item.completed .checkbox {
+            background: #4ade80;
+            border-color: #4ade80;
+        }
+        
+        .checkbox::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .checklist-item.completed .checkbox::after {
+            opacity: 1;
+        }
+        
+        .checklist-text {
+            flex: 1;
+        }
+        
+        .checklist-title {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .checklist-desc {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .checklist-desc code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #dc2626;
+        }
+        
+        .footer {
+            background: #f9fafb;
+            padding: 30px 40px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .footer-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+        
+        .footer-links {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .footer-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s ease;
+        }
+        
+        .footer-link:hover {
+            color: #764ba2;
+        }
+        
+        .success-message {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-message h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .reset-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 20px;
+            transition: background 0.2s ease;
+        }
+        
+        .reset-btn:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕶️ Óticas Carol</h1>
+            <p>Checklist de Configuração do Sistema</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% completo</div>
+        </div>
+        
+        <div class="content">
+            <div class="success-message" id="successMessage">
+                <h2>🎉 Configuração Completa!</h2>
+                <p>Parabéns! Você completou todas as etapas. O sistema está pronto para uso!</p>
+                <button class="reset-btn" onclick="resetChecklist()">Resetar Checklist</button>
+            </div>
+            
+            <!-- Pré-requisitos -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">1</span>
+                    Pré-requisitos
+                </h2>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this, 'prereq1')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Node.js instalado</div>
+                            <div class="checklist-desc">Verifique com: <code>node --version</code></div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'prereq2')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Conta no Supabase criada</div>
+                            <div class="checklist-desc">Acesse: <code>supabase.com</code></div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'prereq3')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Acesso ao projeto Supabase</div>
+                            <div class="checklist-desc">Project ID: <code>myuxgszvueycsutgojnp</code></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Instalação -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">2</span>
+                    Instalação do CLI
+                </h2>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this, 'install1')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Instalar Supabase CLI</div>
+                            <div class="checklist-desc"><code>npm install -g supabase</code></div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'install2')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Verificar instalação</div>
+                            <div class="checklist-desc"><code>supabase --version</code></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Login e Vínculo -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">3</span>
+                    Login e Vínculo
+                </h2>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this, 'login1')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Fazer login no CLI</div>
+                            <div class="checklist-desc"><code>supabase login</code></div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'login2')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Vincular ao projeto</div>
+                            <div class="checklist-desc"><code>supabase link --project-ref myuxgszvueycsutgojnp</code></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Deploy -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">4</span>
+                    Deploy do Backend
+                </h2>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this, 'deploy1')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Executar script de deploy</div>
+                            <div class="checklist-desc">Windows: <code>.\deploy-supabase.ps1</code> | Mac/Linux: <code>./deploy-supabase.sh</code></div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'deploy2')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Verificar deploy</div>
+                            <div class="checklist-desc"><code>supabase functions list</code> - deve mostrar "server"</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Testes -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">5</span>
+                    Testes e Verificação
+                </h2>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this, 'test1')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Testar health check</div>
+                            <div class="checklist-desc">Abrir URL no navegador deve retornar <code>{"status":"ok"}</code></div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'test2')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Executar setup inicial</div>
+                            <div class="checklist-desc">Acessar app com <code>?setup=true</code> e executar setup</div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'test3')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Testar login</div>
+                            <div class="checklist-desc"><code>admin@oticascarol.com.br</code> / <code>admin123</code></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Testes Funcionais -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-number">6</span>
+                    Testes Funcionais
+                </h2>
+                <ul class="checklist">
+                    <li class="checklist-item" onclick="toggleItem(this, 'func1')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Dashboard carrega corretamente</div>
+                            <div class="checklist-desc">Verificar se estatísticas aparecem</div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'func2')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Criar solicitação (como loja)</div>
+                            <div class="checklist-desc">Testar criação de pedido de montagem/motoboy</div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'func3')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Aprovar solicitação (como aprovador)</div>
+                            <div class="checklist-desc">Testar aprovação/reprovação de pedidos</div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'func4')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Gerar relatório mensal</div>
+                            <div class="checklist-desc">Testar extrato e exportação PDF/Excel</div>
+                        </div>
+                    </li>
+                    <li class="checklist-item" onclick="toggleItem(this, 'func5')">
+                        <div class="checkbox"></div>
+                        <div class="checklist-text">
+                            <div class="checklist-title">Gerenciar usuários (admin)</div>
+                            <div class="checklist-desc">Criar, editar e deletar usuários</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-title">📚 Documentação Útil</div>
+            <div class="footer-links">
+                <a href="INICIO-CONFIGURACAO.md" class="footer-link">
+                    ⚡ Guia de Início Rápido
+                </a>
+                <a href="CONFIGURACAO-SUPABASE.md" class="footer-link">
+                    🔧 Configuração Detalhada do Supabase
+                </a>
+                <a href="TROUBLESHOOTING-DEPLOY.md" class="footer-link">
+                    🔧 Solução de Problemas de Deploy
+                </a>
+                <a href="DIAGNOSTICO-BACKEND.md" class="footer-link">
+                    🩺 Diagnóstico de Erros de Backend
+                </a>
+                <a href="test-backend.html" class="footer-link">
+                    🧪 Ferramenta de Teste de Backend
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load saved state from localStorage
+        const savedState = JSON.parse(localStorage.getItem('checklistState') || '{}');
+        
+        // Apply saved state
+        Object.keys(savedState).forEach(id => {
+            if (savedState[id]) {
+                const item = document.querySelector(`[onclick*="${id}"]`);
+                if (item) {
+                    item.classList.add('completed');
+                }
+            }
+        });
+        
+        function toggleItem(element, id) {
+            element.classList.toggle('completed');
+            
+            // Save state
+            savedState[id] = element.classList.contains('completed');
+            localStorage.setItem('checklistState', JSON.stringify(savedState));
+            
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const items = document.querySelectorAll('.checklist-item');
+            const completed = document.querySelectorAll('.checklist-item.completed');
+            const percentage = Math.round((completed.length / items.length) * 100);
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = percentage + '% completo';
+            
+            // Show success message if 100%
+            if (percentage === 100) {
+                document.getElementById('successMessage').classList.add('show');
+            } else {
+                document.getElementById('successMessage').classList.remove('show');
+            }
+        }
+        
+        function resetChecklist() {
+            if (confirm('Tem certeza que deseja resetar todo o checklist?')) {
+                localStorage.removeItem('checklistState');
+                document.querySelectorAll('.checklist-item').forEach(item => {
+                    item.classList.remove('completed');
+                });
+                updateProgress();
+            }
+        }
+        
+        // Initial progress update
+        updateProgress();
+    </script>
+</body>
+</html>

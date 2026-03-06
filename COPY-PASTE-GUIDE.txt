@@ -1,0 +1,91 @@
+═══════════════════════════════════════════════════════════════
+  🎯 GUIA RÁPIDO: COPIAR E COLAR NO SUPABASE
+═══════════════════════════════════════════════════════════════
+
+📍 PASSO 1: Acesse o Dashboard
+   https://supabase.com/dashboard/project/myuxgszvueycsutgojnp/functions
+
+📍 PASSO 2: Clique em "server" → "Edit" ou "Code"
+
+📍 PASSO 3: Para CADA arquivo abaixo, faça:
+
+   1. Abra o arquivo no seu editor local
+   2. Selecione TUDO (Ctrl+A)
+   3. Copie (Ctrl+C)
+   4. No Supabase, abra o mesmo arquivo
+   5. Selecione TUDO (Ctrl+A)
+   6. Cole (Ctrl+V)
+   7. Salve
+
+═══════════════════════════════════════════════════════════════
+
+ARQUIVO 1 de 4: fcm.ts
+─────────────────────────────────────────────────────────────
+📁 Arquivo local:  /supabase/functions/server/fcm.ts
+📝 Linhas: 26
+🎯 Cole em: fcm.ts (no Supabase)
+─────────────────────────────────────────────────────────────
+
+ARQUIVO 2 de 4: types.ts
+─────────────────────────────────────────────────────────────
+📁 Arquivo local:  /supabase/functions/server/types.ts
+📝 Linhas: 51 (arquivo consolidado - não haverá mais types.tsx)
+🎯 Cole em: types.ts (no Supabase)
+⚠️  IMPORTANTE: Delete o arquivo types.tsx se ele existir!
+─────────────────────────────────────────────────────────────
+
+ARQUIVO 3 de 4: email.tsx
+─────────────────────────────────────────────────────────────
+📁 Arquivo local:  /supabase/functions/server/email.tsx
+📝 Linhas: 319
+🎯 Cole em: email.tsx (no Supabase)
+─────────────────────────────────────────────────────────────
+
+ARQUIVO 4 de 4: index.tsx ⭐ MAIS IMPORTANTE
+─────────────────────────────────────────────────────────────
+📁 Arquivo local:  /supabase/functions/server/index.tsx
+📝 Linhas: 1091
+🎯 Cole em: index.tsx (no Supabase)
+─────────────────────────────────────────────────────────────
+
+❌ NÃO MODIFIQUE: kv_store.tsx
+   Este arquivo já existe e não deve ser alterado!
+
+⚠️  DELETE SE EXISTIR: types.tsx
+   Agora temos apenas types.ts (consolidado)
+   Se você vir types.tsx no Supabase, DELETE-O!
+
+═══════════════════════════════════════════════════════════════
+
+📍 PASSO 4: Deploy
+
+   1. Clique em "Deploy" ou "Save & Deploy"
+   2. Aguarde a confirmação (10-30 segundos)
+   3. Aguarde MAIS 30-60 segundos para propagação
+
+═══════════════════════════════════════════════════════════════
+
+📍 PASSO 5: Teste
+
+   Abra no navegador:
+   https://myuxgszvueycsutgojnp.supabase.co/functions/v1/server/health
+
+   ✅ Deve retornar: {"status":"ok"}
+
+═══════════════════════════════════════════════════════════════
+
+📍 PASSO 6: Execute o Setup
+
+   1. Abra: test-new-deployment.html
+   2. Clique em "⚙️ Executar Setup"
+   3. Deve criar 11 usuários e 9 lojas
+
+═══════════════════════════════════════════════════════════════
+
+🎉 PRONTO! O sistema está funcionando!
+
+   Login admin:
+   Email: admin@oticascarol.com.br
+   Senha: admin123
+
+═══════════════════════════════════════════════════════════════

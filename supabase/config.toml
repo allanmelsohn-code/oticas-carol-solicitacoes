@@ -1,0 +1,25 @@
+# Supabase Configuration File
+# Configuração do projeto Óticas Carol
+
+[project]
+project_id = "myuxgszvueycsutgojnp"
+
+[api]
+enabled = true
+port = 54321
+# Default port for Supabase API
+
+[db]
+port = 54322
+# Default port for Postgres
+
+[studio]
+enabled = true
+port = 54323
+# Default port for Supabase Studio
+
+[functions]
+enabled = true
+# Enable Edge Functions
+verify_jwt = false
+# Disable JWT verification since we use custom session-based auth
