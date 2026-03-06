@@ -32,21 +32,15 @@ export function UserAdmin() {
     role: 'store',
     storeId: '',
     password: ''
-  });  
+  });
 
   useEffect(() => {
     loadStores();
     loadUsers();
   }, []);
 
-  useEffect(() => {
-    loadStores();
-    loadUsers();
-  }, []);
-
- const getSessionId = () => {
+  const getSessionId = () => {
     return localStorage.getItem('sessionId') || '';
-};
   };
 
   const loadStores = async () => {
