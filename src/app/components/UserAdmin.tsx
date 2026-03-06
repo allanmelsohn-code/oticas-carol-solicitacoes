@@ -39,8 +39,9 @@ export function UserAdmin() {
     loadUsers();
   }, []);
 
-  const getSessionId = () => {
-    return sessionStorage.getItem('sessionId') || '';
+ const getSessionId = () => {
+    return localStorage.getItem('sessionId') || '';
+};
   };
 
   const loadStores = async () => {

@@ -22,7 +22,7 @@ export function Login({ onLogin }: LoginProps) {
 
     try {
       console.log('🔑 Tentando fazer login com:', email);
-      console.log('🌐 API Base:', `https://${projectId}.supabase.co/functions/v1/server`);
+      console.log('🌐 API Base:', `https://${projectId}.supabase.co/functions/v1/make-server-b2c42f95`);
       
       const result = await auth.signin(email, password);
       console.log('✅ Login bem-sucedido:', result);

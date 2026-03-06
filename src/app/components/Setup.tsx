@@ -11,7 +11,7 @@ export function Setup() {
   const [loading, setLoading] = useState(false);
   const [healthStatus, setHealthStatus] = useState<'idle' | 'checking' | 'online' | 'offline'>('idle');
   
-  const API_BASE = `https://${projectId}.supabase.co/functions/v1/server`;
+ const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-b2c42f95`;
 
   const testBackendHealth = async () => {
     setHealthStatus('checking');
