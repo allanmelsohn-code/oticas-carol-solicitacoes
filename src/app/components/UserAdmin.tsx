@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { projectId, publicAnonKey } from '/utils/supabase/info';
 import type { Store } from '../../types';
 
