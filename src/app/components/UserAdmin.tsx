@@ -26,13 +26,18 @@ export function UserAdmin() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingUser, setEditingUser] = useState<UserData | null>(null);
-  const [newUser, setNewUser] = useState<UserData>({
+ const [newUser, setNewUser] = useState<UserData>({
     email: '',
     name: '',
     role: 'store',
     storeId: '',
     password: ''
-  });
+  });  
+
+  useEffect(() => {
+    loadStores();
+    loadUsers();
+  }, []);
 
   useEffect(() => {
     loadStores();
