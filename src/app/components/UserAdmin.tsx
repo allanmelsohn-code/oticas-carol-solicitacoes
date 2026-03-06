@@ -1,7 +1,7 @@
 import { projectId, publicAnonKey } from '/utils/supabase/info';
 import type { Store } from '../../types';
 
-const API_BASE = `https://${projectId}.supabase.co/functions/v1/server`;
+const API_BASE = `https://${projectId}.supabase.co/functions/v1/make-server-b2c42f95`;
 
 interface UserData {
   email: string;
