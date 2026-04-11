@@ -1,5 +1,5 @@
 // src/app/components/requests/RequestsList.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
 import { requests as requestsApi } from '../../../lib/api';
 import type { Request, ApprovalInfo } from '../../../types';
@@ -26,6 +26,27 @@ export function RequestsList({ statusFilter = 'all', onNavigate }: RequestsListP
   const [loading, setLoading] = useState(true);
   const [approvalsMap, setApprovalsMap] = useState<Record<string, ApprovalInfo | null>>({});
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartY = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const delta = e.changedTouches[0].clientY - touchStartY.current;
+    const atTop = (containerRef.current?.scrollTop ?? 0) === 0;
+    if (delta > 70 && atTop) {
+      setLoading(true);
+      requestsApi.getAll()
+        .then((data: { requests?: Request[] }) => {
+          setAllRequests(data.requests ?? []);
+        })
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  };
+
   useEffect(() => {
     requestsApi.getAll()
       .then((data: { requests?: Request[] }) => {
@@ -46,7 +67,12 @@ export function RequestsList({ statusFilter = 'all', onNavigate }: RequestsListP
   const handleToggle = (id: string) => setOpenId(prev => prev === id ? null : id);
 
   return (
-    <div className="space-y-5">
+    <div
+      ref={containerRef}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="space-y-5"
+    >
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-bold text-gray-900">Solicitações</h1>
         {onNavigate && (

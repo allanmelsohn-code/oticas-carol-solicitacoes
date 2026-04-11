@@ -76,7 +76,7 @@ export function Sidebar({ user, currentView, pendingCount, onNavigate, onLogout 
             <div className="text-xs font-semibold text-white truncate">{user.name}</div>
             <div className="text-[10px]" style={{ color: 'var(--color-sidebar-text)' }}>{ROLE_LABELS[user.role]}</div>
           </div>
-          <button onClick={onLogout} aria-label="Sair" className="p-1 rounded hover:bg-gray-700 transition-colors" title="Sair">
+          <button onClick={onLogout} aria-label="Sair" className="p-1 rounded hover:bg-gray-700 transition-colors icon-btn-compact" title="Sair">
             <LogOut size={13} style={{ color: 'var(--color-sidebar-text)' }} />
           </button>
         </div>

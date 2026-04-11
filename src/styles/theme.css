@@ -170,3 +170,19 @@ input {
   --sidebar-width: 210px;
   --bottomnav-height: 56px;
 }
+
+/* === MOBILE NATIVE === */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
+}
+
+/* Touch targets — minimum 44px for all interactive elements */
+button, a, [role="button"] {
+  min-height: 44px;
+}
+/* Exception for compact icon buttons */
+.icon-btn-compact {
+  min-height: unset;
+}
