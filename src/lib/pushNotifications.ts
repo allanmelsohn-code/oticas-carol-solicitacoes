@@ -196,6 +196,38 @@ const saveFCMTokenToBackend = async (token: string): Promise<void> => {
   }
 };
 
+// Refresh FCM token if it has changed since last registration
+export async function refreshFCMTokenIfNeeded(userId: string): Promise<void> {
+  if (!isNativePlatform()) return;
+  try {
+    PushNotifications.addListener('registration', async (token: Token) => {
+      const saved = localStorage.getItem('fcm-token');
+      if (token.value !== saved) {
+        localStorage.setItem('fcm-token', token.value);
+        await saveFCMTokenToBackend(token.value);
+      }
+    });
+    await PushNotifications.register();
+  } catch (err) {
+    console.error('Erro no refresh do FCM token:', err);
+  }
+}
+
+// Deep link handler type
+export type DeepLinkHandler = (requestId: string) => void;
+
+// Setup deep link navigation from notification tap
+export function setupDeepLinkFromNotification(onDeepLink: DeepLinkHandler): void {
+  if (!isNativePlatform()) return;
+
+  PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
+    const requestId = action.notification.data?.requestId;
+    if (requestId) {
+      onDeepLink(requestId);
+    }
+  });
+}
+
 // Get stored FCM token
 export const getFCMToken = (): string | null => {
   return localStorage.getItem('fcm-token');

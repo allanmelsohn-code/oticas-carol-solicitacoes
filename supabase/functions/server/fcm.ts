@@ -195,35 +195,44 @@ export async function sendPushToRole(
 
 // Notification helpers for specific events
 
-export async function notifyNewRequest(storeName: string, type: string, value: number): Promise<void> {
+export async function notifyNewRequest(storeName: string, type: string, value: number, requestId?: string): Promise<void> {
   console.log('🆕 Notificando aprovadores sobre nova solicitação...');
-  
+
   await sendPushToRole(
     'approver',
     '🆕 Nova Solicitação Pendente',
     `${storeName} criou uma solicitação de ${type} no valor de R$ ${value.toFixed(2).replace('.', ',')}`,
-    { type: 'new-request' }
+    {
+      type: 'new-request',
+      ...(requestId ? { requestId, click_action: 'FLUTTER_NOTIFICATION_CLICK' } : {}),
+    }
   );
 }
 
-export async function notifyRequestApproved(userId: string, type: string, value: number, observation?: string): Promise<void> {
+export async function notifyRequestApproved(userId: string, type: string, value: number, observation?: string, requestId?: string): Promise<void> {
   console.log(`✅ Notificando usuário ${userId} sobre aprovação...`);
-  
+
   await sendPushToUser(
     userId,
     '✅ Solicitação Aprovada',
     `Sua solicitação de ${type} (R$ ${value.toFixed(2).replace('.', ',')}) foi aprovada!${observation ? ` - ${observation}` : ''}`,
-    { type: 'approved' }
+    {
+      type: 'approved',
+      ...(requestId ? { requestId, click_action: 'FLUTTER_NOTIFICATION_CLICK' } : {}),
+    }
   );
 }
 
-export async function notifyRequestRejected(userId: string, type: string, value: number, observation: string): Promise<void> {
+export async function notifyRequestRejected(userId: string, type: string, value: number, observation: string, requestId?: string): Promise<void> {
   console.log(`❌ Notificando usuário ${userId} sobre reprovação...`);
-  
+
   await sendPushToUser(
     userId,
     '❌ Solicitação Reprovada',
     `Sua solicitação de ${type} (R$ ${value.toFixed(2).replace('.', ',')}) foi reprovada. Motivo: ${observation}`,
-    { type: 'rejected' }
+    {
+      type: 'rejected',
+      ...(requestId ? { requestId, click_action: 'FLUTTER_NOTIFICATION_CLICK' } : {}),
+    }
   );
 }

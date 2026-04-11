@@ -10,7 +10,7 @@ import { UserAdmin } from './components/UserAdmin';
 import { NotificationSettings } from './components/NotificationSettings';
 import { AppShell } from './components/layout/AppShell';
 import { auth, getSessionId, clearSessionId, requests } from '../lib/api';
-import { initializePushNotifications, setupPushListeners, isNativePlatform } from '../lib/pushNotifications';
+import { initializePushNotifications, setupPushListeners, isNativePlatform, refreshFCMTokenIfNeeded, setupDeepLinkFromNotification } from '../lib/pushNotifications';
 import type { User } from '../types';
 import type { AppView } from './components/layout/navItems';
 
@@ -83,6 +83,11 @@ export default function App() {
           
           // Setup listeners for incoming notifications
           setupPushListeners();
+          refreshFCMTokenIfNeeded(user.id);
+          setupDeepLinkFromNotification((requestId) => {
+            // Navigate to requests list when notification tapped
+            handleNavigate('requests');
+          });
         } else {
           console.log('⚠️ Falha ao configurar notificações:', result.error);
         }
