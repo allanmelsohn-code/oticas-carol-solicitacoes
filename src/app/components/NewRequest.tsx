@@ -6,6 +6,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Plus, Calendar, DollarSign, FileText, Check, CheckCircle } from 'lucide-react';
 import type { User, Store } from '../../types';
+import { REQUEST_TYPE_LABELS } from '../../types';
 import { formatCurrency } from '../../utils/currency';
 import { stores, requests, auth } from '../../lib/api';
 import { notifyNewRequest } from '../../lib/notifications';
@@ -40,7 +41,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
   const [formData, setFormData] = useState({
     storeId: '',
     requestedBy: '',
-    type: 'montagem' as 'montagem' | 'motoboy',
+    type: 'montagem' as 'montagem' | 'motoboy' | 'sedex',
     justification: '',
     value: '',
     date: new Date().toISOString().split('T')[0],
@@ -103,7 +104,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
       // Send notification to approvers about new request
       const selectedStore = storesList.find(s => s.id === formData.storeId);
       const storeName = selectedStore ? `${selectedStore.code} - ${selectedStore.name}` : 'Loja';
-      const typeLabel = formData.type === 'montagem' ? 'Montagem' : 'Motoboy';
+      const typeLabel = REQUEST_TYPE_LABELS[formData.type];
       notifyNewRequest(storeName, typeLabel, parseFloat(formData.value));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao criar solicitação');
@@ -120,7 +121,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
     const resetData = {
       storeId: currentUser?.role === 'store' && userStore ? userStore.id : '',
       requestedBy: '',
-      type: 'montagem' as 'montagem' | 'motoboy',
+      type: 'montagem' as 'montagem' | 'motoboy' | 'sedex',
       justification: '',
       value: '',
       date: new Date().toISOString().split('T')[0],
@@ -166,7 +167,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
                 <div>
                   <p className="text-sm text-gray-500">Tipo</p>
                   <p className="font-semibold">
-                    {createdRequestData.type === 'montagem' ? 'Montagem (Laboratório)' : 'Entrega Motoboy'}
+                    {REQUEST_TYPE_LABELS[createdRequestData.type as keyof typeof REQUEST_TYPE_LABELS] ?? createdRequestData.type}
                   </p>
                 </div>
                 <div>
@@ -331,6 +332,17 @@ export function NewRequest({ onCancel }: NewRequestProps) {
                       className="w-4 h-4 text-blue-600"
                     />
                     <span className="text-sm">Entrega Motoboy</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="type"
+                      value="sedex"
+                      checked={formData.type === 'sedex'}
+                      onChange={(e) => handleChange('type', e.target.value)}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <span className="text-sm">Sedex</span>
                   </label>
                 </div>
               </div>
