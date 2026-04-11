@@ -5,6 +5,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 import * as kv from './kv_store.tsx';
 import * as fcm from './fcm.ts';
 import type { User, Store, Request, Approval } from './types.ts';
+import { sendNewRequestEmail, sendApprovedEmail, sendRejectedEmail } from './email.ts';
 
 const app = new Hono();
 
@@ -407,6 +408,32 @@ app.post("/make-server-b2c42f95/requests", async (c) => {
 
     await kv.set(`request:${requestId}`, request);
 
+    // Fire-and-forget emails to all approvers
+    (async () => {
+      try {
+        const allUsers = await kv.getByPrefix('user:');
+        const approvers = allUsers.filter((u: { role: string }) => u.role === 'approver');
+        const emailData = {
+          id: request.id,
+          storeName: request.storeName,
+          type: request.type,
+          value: request.value,
+          osNumber: request.osNumber,
+          date: request.date,
+          justification: request.justification,
+          chargedToClient: request.chargedToClient ?? false,
+          requestedBy: request.requestedBy,
+        };
+        await Promise.all(
+          approvers.map((approver: { email: string }) =>
+            sendNewRequestEmail(emailData, approver.email).catch(console.error)
+          )
+        );
+      } catch (e) {
+        console.error('Email dispatch error (non-blocking):', e);
+      }
+    })();
+
     // Send push notification to approvers
     fcm.notifyNewRequest(
       request.storeName,
@@ -602,6 +629,36 @@ app.post("/make-server-b2c42f95/approvals", async (c) => {
     };
 
     await kv.set(`approval:${requestId}`, approval);
+
+    // Fire-and-forget email to requester
+    (async () => {
+      try {
+        const allUsers = await kv.getByPrefix('user:');
+        const requester = allUsers.find((u: { role: string; storeId: string }) =>
+          u.role === 'store' && u.storeId === request.storeId
+        );
+        if (requester) {
+          const emailData = {
+            id: request.id,
+            storeName: request.storeName,
+            type: request.type,
+            value: request.value,
+            osNumber: request.osNumber,
+            date: request.date,
+            justification: request.justification,
+            chargedToClient: request.chargedToClient ?? false,
+            requestedBy: request.requestedBy,
+          };
+          if (action === 'approved') {
+            await sendApprovedEmail(emailData, requester.email, user.name);
+          } else {
+            await sendRejectedEmail(emailData, requester.email, user.name, observation ?? '');
+          }
+        }
+      } catch (e) {
+        console.error('Email dispatch error (non-blocking):', e);
+      }
+    })();
 
     // Send push notification to store user who created the request
     // Find the user who created the request by storeId
