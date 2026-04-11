@@ -1,6 +1,6 @@
 // Frontend types for Óticas Carol system
 
-export type UserRole = 'store' | 'approver' | 'viewer';
+export type UserRole = 'store' | 'approver' | 'approver_store' | 'viewer';
 
 export interface User {
   id: string;

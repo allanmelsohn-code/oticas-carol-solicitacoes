@@ -30,7 +30,7 @@ export function UserForm({ initial, stores, onSubmit, onCancel }: UserFormProps)
         name,
         email,
         role,
-        storeId: role === 'store' ? storeId : undefined,
+        storeId: (role === 'store' || role === 'approver_store') ? storeId : undefined,
         password: isNew ? password : undefined,
       });
     } finally {
@@ -53,12 +53,13 @@ export function UserForm({ initial, stores, onSubmit, onCancel }: UserFormProps)
         <div className="flex flex-col gap-1">
           <label className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Perfil *</label>
           <select className={inputCls} value={role} onChange={e => setRole(e.target.value as User['role'])}>
-            <option value="store">Loja</option>
+            <option value="store">Loja (solicitante)</option>
             <option value="approver">Aprovador</option>
+            <option value="approver_store">Aprovador + Solicitante</option>
             <option value="viewer">Visualizador</option>
           </select>
         </div>
-        {role === 'store' && (
+        {(role === 'store' || role === 'approver_store') && (
           <div className="flex flex-col gap-1">
             <label className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Loja</label>
             <select className={inputCls} value={storeId} onChange={e => setStoreId(e.target.value)}>
