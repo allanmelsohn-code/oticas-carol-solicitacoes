@@ -1,10 +1,14 @@
 import { LayoutDashboard, ClipboardList, CheckSquare, BarChart2, Settings } from 'lucide-react';
 import type React from 'react';
 
-export type AppView = 'dashboard' | 'requests' | 'approvals' | 'report' | 'user-admin';
+// The nav-visible views (appear in sidebar/bottom nav)
+export type NavView = 'dashboard' | 'requests' | 'approvals' | 'report' | 'user-admin';
+
+// All routable views (includes non-nav views)
+export type AppView = NavView | 'new-request' | 'notifications';
 
 export interface NavItemDef {
-  id: AppView;
+  id: NavView;
   label: string;
   shortLabel: string;
   icon: React.ElementType;
