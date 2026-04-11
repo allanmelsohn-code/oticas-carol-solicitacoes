@@ -1,4 +1,5 @@
 // src/app/components/layout/BottomNav.tsx
+import React from 'react';
 import { LayoutDashboard, ClipboardList, CheckSquare, BarChart2, Settings } from 'lucide-react';
 import type { User } from '../../../types';
 
@@ -9,16 +10,23 @@ interface BottomNavProps {
   onNavigate: (view: string) => void;
 }
 
-const ALL_ITEMS = [
+interface BottomNavItem {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+  roles: Array<'store' | 'approver' | 'viewer'>;
+}
+
+const ALL_ITEMS: BottomNavItem[] = [
   { id: 'dashboard',  label: 'Início',    icon: LayoutDashboard, roles: ['store','approver','viewer'] },
   { id: 'requests',   label: 'Pedidos',   icon: ClipboardList,   roles: ['store','approver','viewer'] },
   { id: 'approvals',  label: 'Aprovar',   icon: CheckSquare,     roles: ['approver'] },
   { id: 'report',     label: 'Relatório', icon: BarChart2,       roles: ['approver','viewer'] },
   { id: 'user-admin', label: 'Admin',     icon: Settings,        roles: ['approver'] },
-] as const;
+];
 
 export function BottomNav({ user, currentView, pendingCount, onNavigate }: BottomNavProps) {
-  const items = ALL_ITEMS.filter(i => i.roles.includes(user.role as never));
+  const items = ALL_ITEMS.filter(i => i.roles.includes(user.role));
 
   return (
     <nav

@@ -23,15 +23,7 @@ export function AppShell({ user, currentView, pendingCount, onNavigate, onLogout
         onNavigate={onNavigate}
         onLogout={onLogout}
       />
-      <main
-        className="transition-all"
-        style={{
-          marginLeft: 'var(--sidebar-width)',
-          paddingBottom: 'var(--bottomnav-height)',
-        }}
-      >
-        {/* Remove margin on mobile (sidebar hidden) */}
-        <style>{`@media (max-width: 767px) { main { margin-left: 0 !important; } }`}</style>
+      <main className="transition-all md:pl-[210px] pb-14 md:pb-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
           {children}
         </div>
