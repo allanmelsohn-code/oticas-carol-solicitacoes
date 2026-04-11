@@ -106,14 +106,17 @@ export function RequestsList({ statusFilter = 'all', onNavigate }: RequestsListP
         </div>
 
         {/* Table header */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-100 text-[9px] font-bold uppercase tracking-wider text-gray-400">
-          <span className="w-4"></span>
-          <span className="w-20">Loja</span>
-          <span className="w-16">Tipo</span>
-          <span className="w-14">Valor</span>
-          <span className="w-14">Data</span>
-          <span className="flex-1">OS</span>
-          <span className="w-16">Status</span>
+        <div
+          className="hidden sm:grid items-center gap-3 px-3 py-2 bg-gray-50 border-b border-gray-100 text-[10px] font-bold uppercase tracking-wider text-gray-400"
+          style={{ gridTemplateColumns: '16px minmax(100px,1.5fr) 80px 80px 80px minmax(80px,1fr) 80px' }}
+        >
+          <span></span>
+          <span>Loja</span>
+          <span>Tipo</span>
+          <span>Valor</span>
+          <span>Data</span>
+          <span>OS</span>
+          <span className="justify-self-end">Status</span>
         </div>
 
         {loading ? (

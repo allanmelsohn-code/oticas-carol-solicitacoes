@@ -26,10 +26,10 @@ export function ReportTable({ requests, approvalsMap }: ReportTableProps) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
       {/* Table header */}
-      <div className="hidden md:grid text-[9px] font-bold uppercase tracking-wider text-gray-400 px-4 py-2.5 bg-gray-50 border-b border-gray-100"
-        style={{ gridTemplateColumns: '1fr 80px 60px 70px 80px 70px 1fr 1.5fr 70px' }}>
+      <div className="hidden md:grid text-[10px] font-bold uppercase tracking-wider text-gray-400 px-4 py-2.5 bg-gray-50 border-b border-gray-100 gap-3"
+        style={{ gridTemplateColumns: 'minmax(120px,1.5fr) 90px 70px 80px 90px 70px minmax(100px,1fr) minmax(120px,2fr) 80px' }}>
         <span>Loja</span><span>Tipo</span><span>OS</span><span>Data</span>
-        <span className="text-right">Valor</span><span>Cobrado</span>
+        <span>Valor</span><span>Cobrado</span>
         <span>Solicitante</span><span>Justificativa</span><span>Status</span>
       </div>
 
@@ -42,8 +42,8 @@ export function ReportTable({ requests, approvalsMap }: ReportTableProps) {
           const ss = STATUS_STYLES[req.status] ?? STATUS_STYLES.pending;
           return (
             <div key={req.id}
-              className="hidden md:grid items-center px-4 py-2.5 border-b border-gray-50 last:border-0 text-xs"
-              style={{ gridTemplateColumns: '1fr 80px 60px 70px 80px 70px 1fr 1.5fr 70px' }}>
+              className="hidden md:grid items-center px-4 py-2.5 border-b border-gray-50 last:border-0 text-xs gap-3"
+              style={{ gridTemplateColumns: 'minmax(120px,1.5fr) 90px 70px 80px 90px 70px minmax(100px,1fr) minmax(120px,2fr) 80px' }}>
               <span className="font-medium text-gray-800 truncate">{req.storeName}</span>
               <span className="flex items-center gap-1 text-gray-500">
                 <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: TYPE_COLORS[req.type] ?? '#9ca3af' }} />
