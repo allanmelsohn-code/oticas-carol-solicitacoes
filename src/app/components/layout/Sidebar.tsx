@@ -1,26 +1,7 @@
 // src/app/components/layout/Sidebar.tsx
-import {
-  LayoutDashboard, ClipboardList, CheckSquare,
-  BarChart2, Settings, LogOut, User as UserIcon,
-} from 'lucide-react';
+import { LogOut, User as UserIcon } from 'lucide-react';
 import type { User } from '../../../types';
-
-type View = 'dashboard' | 'requests' | 'approvals' | 'report' | 'user-admin';
-
-interface NavItem {
-  id: View;
-  label: string;
-  icon: React.ElementType;
-  roles: Array<'store' | 'approver' | 'viewer'>;
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard',  label: 'Dashboard',    icon: LayoutDashboard, roles: ['store', 'approver', 'viewer'] },
-  { id: 'requests',   label: 'Solicitações', icon: ClipboardList,   roles: ['store', 'approver', 'viewer'] },
-  { id: 'approvals',  label: 'Aprovações',   icon: CheckSquare,     roles: ['approver'] },
-  { id: 'report',     label: 'Relatórios',   icon: BarChart2,       roles: ['approver', 'viewer'] },
-  { id: 'user-admin', label: 'Admin',        icon: Settings,        roles: ['approver'] },
-];
+import { NAV_ITEMS, type AppView } from './navItems';
 
 const ROLE_LABELS: Record<string, string> = {
   store: 'Loja',
@@ -30,9 +11,9 @@ const ROLE_LABELS: Record<string, string> = {
 
 interface SidebarProps {
   user: User;
-  currentView: string;
+  currentView: AppView;
   pendingCount: number;
-  onNavigate: (view: string) => void;
+  onNavigate: (view: AppView) => void;
   onLogout: () => void;
 }
 
@@ -66,6 +47,7 @@ export function Sidebar({ user, currentView, pendingCount, onNavigate, onLogout 
             <button
               key={item.id}
               onClick={() => onNavigate(item.id)}
+              aria-current={isActive ? 'page' : undefined}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors text-left"
               style={{
                 background: isActive ? 'var(--color-sidebar-item-active)' : 'transparent',
@@ -76,7 +58,7 @@ export function Sidebar({ user, currentView, pendingCount, onNavigate, onLogout 
               <span className="flex-1">{item.label}</span>
               {showBadge && (
                 <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                  {pendingCount}
+                  {pendingCount > 99 ? '99+' : pendingCount}
                 </span>
               )}
             </button>
@@ -94,7 +76,7 @@ export function Sidebar({ user, currentView, pendingCount, onNavigate, onLogout 
             <div className="text-xs font-semibold text-white truncate">{user.name}</div>
             <div className="text-[10px]" style={{ color: 'var(--color-sidebar-text)' }}>{ROLE_LABELS[user.role]}</div>
           </div>
-          <button onClick={onLogout} className="p-1 rounded hover:bg-gray-700 transition-colors" title="Sair">
+          <button onClick={onLogout} aria-label="Sair" className="p-1 rounded hover:bg-gray-700 transition-colors" title="Sair">
             <LogOut size={13} style={{ color: 'var(--color-sidebar-text)' }} />
           </button>
         </div>

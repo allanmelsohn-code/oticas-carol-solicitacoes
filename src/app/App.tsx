@@ -8,19 +8,18 @@ import { MonthlyReport } from './components/MonthlyReport';
 import { RequestsList } from './components/RequestsList';
 import { UserAdmin } from './components/UserAdmin';
 import { NotificationSettings } from './components/NotificationSettings';
-import { Help } from './components/Help';
 import { AppShell } from './components/layout/AppShell';
 import { auth, getSessionId, clearSessionId, requests } from '../lib/api';
 import { initializePushNotifications, setupPushListeners, isNativePlatform } from '../lib/pushNotifications';
 import type { User } from '../types';
+import type { AppView } from './components/layout/navItems';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
-  const [currentView, setCurrentView] = useState('dashboard');
+  const [currentView, setCurrentView] = useState<AppView>('dashboard');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [showSetup, setShowSetup] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
@@ -100,12 +99,11 @@ export default function App() {
     setPendingCount(0);
   };
 
-  const handleNavigate = (view: string, filter?: string) => {
+  const handleNavigate = (view: AppView, filter?: string) => {
     setCurrentView(view);
     if (filter) {
       setStatusFilter(filter);
     }
-    fetchPendingCount();
   };
 
   if (loading) {
@@ -139,7 +137,6 @@ export default function App() {
       {currentView === 'requests' && <RequestsList statusFilter={statusFilter} />}
       {currentView === 'user-admin' && user && <UserAdmin currentUser={user} />}
       {currentView === 'notifications' && <NotificationSettings />}
-      {showHelp && <Help onClose={() => setShowHelp(false)} />}
     </AppShell>
   );
 }

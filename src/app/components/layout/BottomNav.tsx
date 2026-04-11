@@ -1,32 +1,16 @@
 // src/app/components/layout/BottomNav.tsx
-import React from 'react';
-import { LayoutDashboard, ClipboardList, CheckSquare, BarChart2, Settings } from 'lucide-react';
 import type { User } from '../../../types';
+import { NAV_ITEMS, type AppView } from './navItems';
 
 interface BottomNavProps {
   user: User;
-  currentView: string;
+  currentView: AppView;
   pendingCount: number;
-  onNavigate: (view: string) => void;
+  onNavigate: (view: AppView) => void;
 }
-
-interface BottomNavItem {
-  id: string;
-  label: string;
-  icon: React.ElementType;
-  roles: Array<'store' | 'approver' | 'viewer'>;
-}
-
-const ALL_ITEMS: BottomNavItem[] = [
-  { id: 'dashboard',  label: 'Início',    icon: LayoutDashboard, roles: ['store','approver','viewer'] },
-  { id: 'requests',   label: 'Pedidos',   icon: ClipboardList,   roles: ['store','approver','viewer'] },
-  { id: 'approvals',  label: 'Aprovar',   icon: CheckSquare,     roles: ['approver'] },
-  { id: 'report',     label: 'Relatório', icon: BarChart2,       roles: ['approver','viewer'] },
-  { id: 'user-admin', label: 'Admin',     icon: Settings,        roles: ['approver'] },
-];
 
 export function BottomNav({ user, currentView, pendingCount, onNavigate }: BottomNavProps) {
-  const items = ALL_ITEMS.filter(i => i.roles.includes(user.role));
+  const items = NAV_ITEMS.filter(i => i.roles.includes(user.role));
 
   return (
     <nav
@@ -46,6 +30,7 @@ export function BottomNav({ user, currentView, pendingCount, onNavigate }: Botto
           <button
             key={item.id}
             onClick={() => onNavigate(item.id)}
+            aria-current={isActive ? 'page' : undefined}
             className="flex-1 flex flex-col items-center justify-center gap-0.5 relative"
             style={{ minHeight: 44 }}
           >
@@ -57,7 +42,7 @@ export function BottomNav({ user, currentView, pendingCount, onNavigate }: Botto
               className="text-[8px] font-medium"
               style={{ color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-placeholder)' }}
             >
-              {item.label}
+              {item.shortLabel}
             </span>
           </button>
         );

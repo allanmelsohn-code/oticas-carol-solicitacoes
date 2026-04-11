@@ -3,12 +3,13 @@ import type { ReactNode } from 'react';
 import type { User } from '../../../types';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
+import type { AppView } from './navItems';
 
 interface AppShellProps {
   user: User;
-  currentView: string;
+  currentView: AppView;
   pendingCount: number;
-  onNavigate: (view: string) => void;
+  onNavigate: (view: AppView) => void;
   onLogout: () => void;
   children: ReactNode;
 }
@@ -23,7 +24,7 @@ export function AppShell({ user, currentView, pendingCount, onNavigate, onLogout
         onNavigate={onNavigate}
         onLogout={onLogout}
       />
-      <main className="transition-all md:pl-[210px] pb-14 md:pb-0">
+      <main className="transition-all md:pl-[var(--sidebar-width)] pb-[var(--bottomnav-height)] md:pb-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
           {children}
         </div>
