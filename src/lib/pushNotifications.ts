@@ -26,6 +26,9 @@ interface ActionPerformed {
   notification: PushNotificationSchema;
 }
 
+// Guard to prevent listener stacking on repeated calls to refreshFCMTokenIfNeeded
+let _refreshListenerRegistered = false;
+
 // Check if running on native platform
 export const isNativePlatform = (): boolean => {
   return Capacitor.isNativePlatform();
@@ -197,16 +200,20 @@ const saveFCMTokenToBackend = async (token: string): Promise<void> => {
 };
 
 // Refresh FCM token if it has changed since last registration
-export async function refreshFCMTokenIfNeeded(userId: string): Promise<void> {
+export async function refreshFCMTokenIfNeeded(): Promise<void> {
   if (!isNativePlatform()) return;
   try {
-    PushNotifications.addListener('registration', async (token: Token) => {
-      const saved = localStorage.getItem('fcm-token');
-      if (token.value !== saved) {
-        localStorage.setItem('fcm-token', token.value);
-        await saveFCMTokenToBackend(token.value);
-      }
-    });
+    // Only register the listener once to prevent stacking on repeated calls
+    if (!_refreshListenerRegistered) {
+      _refreshListenerRegistered = true;
+      PushNotifications.addListener('registration', async (token: Token) => {
+        const saved = localStorage.getItem('fcm-token');
+        if (token.value !== saved) {
+          localStorage.setItem('fcm-token', token.value);
+          await saveFCMTokenToBackend(token.value);
+        }
+      });
+    }
     await PushNotifications.register();
   } catch (err) {
     console.error('Erro no refresh do FCM token:', err);

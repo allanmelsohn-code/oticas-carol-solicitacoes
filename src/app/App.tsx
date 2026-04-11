@@ -59,6 +59,9 @@ export default function App() {
       console.log('✅ Session valid, user:', result.user);
       setUser(result.user);
       fetchPendingCount();
+      if (isNativePlatform()) {
+        refreshFCMTokenIfNeeded(); // check and update token if changed
+      }
     } catch (error) {
       console.log('❌ Session invalid:', error);
       clearSessionId();
@@ -83,7 +86,6 @@ export default function App() {
           
           // Setup listeners for incoming notifications
           setupPushListeners();
-          refreshFCMTokenIfNeeded(user.id);
           setupDeepLinkFromNotification((requestId) => {
             // Navigate to requests list when notification tapped
             handleNavigate('requests');
