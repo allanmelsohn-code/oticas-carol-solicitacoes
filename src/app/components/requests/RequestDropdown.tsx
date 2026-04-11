@@ -1,14 +1,7 @@
 // src/app/components/requests/RequestDropdown.tsx
 import { Calendar, DollarSign, Hash, User, MessageSquare, CheckCircle, XCircle } from 'lucide-react';
 import { REQUEST_TYPE_LABELS } from '../../../types';
-import type { Request } from '../../../types';
-
-interface ApprovalInfo {
-  approverName: string;
-  observation: string;
-  action: string;
-  timestamp: string;
-}
+import type { Request, ApprovalInfo } from '../../../types';
 
 interface RequestDropdownProps {
   request: Request;

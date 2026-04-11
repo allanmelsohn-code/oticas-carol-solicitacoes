@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { requests as requestsApi } from '../../../lib/api';
-import type { Request } from '../../../types';
+import type { Request, ApprovalInfo } from '../../../types';
 import { RequestRow } from './RequestRow';
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected';
@@ -24,6 +24,7 @@ export function RequestsList({ statusFilter = 'all', onNavigate }: RequestsListP
   const [filter, setFilter] = useState<Filter>((statusFilter as Filter) ?? 'all');
   const [openId, setOpenId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [approvalsMap, setApprovalsMap] = useState<Record<string, ApprovalInfo | null>>({});
 
   useEffect(() => {
     requestsApi.getAll()
@@ -33,6 +34,12 @@ export function RequestsList({ statusFilter = 'all', onNavigate }: RequestsListP
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (statusFilter && statusFilter !== filter) {
+      setFilter(statusFilter as Filter);
+    }
+  }, [statusFilter]);
 
   const filtered = filter === 'all' ? allRequests : allRequests.filter(r => r.status === filter);
 
@@ -94,7 +101,7 @@ export function RequestsList({ statusFilter = 'all', onNavigate }: RequestsListP
               request={req}
               isOpen={openId === req.id}
               onToggle={() => handleToggle(req.id)}
-              approval={null}
+              approval={approvalsMap[req.id] ?? null}
             />
           ))
         )}

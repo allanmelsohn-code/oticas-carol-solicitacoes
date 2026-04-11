@@ -1,15 +1,8 @@
 // src/app/components/requests/RequestRow.tsx
 import { ChevronRight } from 'lucide-react';
 import { REQUEST_TYPE_LABELS } from '../../../types';
-import type { Request } from '../../../types';
+import type { Request, ApprovalInfo } from '../../../types';
 import { RequestDropdown } from './RequestDropdown';
-
-interface ApprovalInfo {
-  approverName: string;
-  observation: string;
-  action: string;
-  timestamp: string;
-}
 
 interface RequestRowProps {
   request: Request;
@@ -32,7 +25,7 @@ export function RequestRow({ request, isOpen, onToggle, approval }: RequestRowPr
     <>
       <div
         className="flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 select-none"
-        style={isRejected && !isOpen ? { background: '#fff9f9' } : undefined}
+        style={isRejected && !isOpen ? { background: 'var(--color-status-rejected-row)' } : undefined}
         onClick={onToggle}
       >
         <ChevronRight

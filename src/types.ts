@@ -38,6 +38,13 @@ export interface Approval {
   timestamp: string;
 }
 
+export interface ApprovalInfo {
+  approverName: string;
+  observation: string;
+  action: string;
+  timestamp: string;
+}
+
 export interface Store {
   id: string;
   code: string;
