@@ -6,9 +6,10 @@ interface StoreTableProps {
   stores: Store[];
   onEdit: (store: Store) => void;
   onDelete: (storeId: string) => void;
+  readOnly?: boolean;
 }
 
-export function StoreTable({ stores, onEdit, onDelete }: StoreTableProps) {
+export function StoreTable({ stores, onEdit, onDelete, readOnly = false }: StoreTableProps) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
       {stores.length === 0 ? (
@@ -23,14 +24,16 @@ export function StoreTable({ stores, onEdit, onDelete }: StoreTableProps) {
               <div className="text-sm font-semibold text-gray-900 truncate">{store.name}</div>
               {store.code && <div className="text-xs text-gray-400">Código: {store.code}</div>}
             </div>
-            <div className="flex gap-1.5">
-              <button onClick={() => onEdit(store)} className="w-7 h-7 rounded-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Editar loja">
-                <Pencil size={11} className="text-gray-500" />
-              </button>
-              <button onClick={() => onDelete(store.id)} className="w-7 h-7 rounded-md border border-red-100 bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors" aria-label="Excluir loja">
-                <Trash2 size={11} className="text-red-500" />
-              </button>
-            </div>
+            {!readOnly && (
+              <div className="flex gap-1.5">
+                <button onClick={() => onEdit(store)} className="w-7 h-7 rounded-md border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors" aria-label="Editar loja">
+                  <Pencil size={11} className="text-gray-500" />
+                </button>
+                <button onClick={() => onDelete(store.id)} className="w-7 h-7 rounded-md border border-red-100 bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors" aria-label="Excluir loja">
+                  <Trash2 size={11} className="text-red-500" />
+                </button>
+              </div>
+            )}
           </div>
         ))
       )}

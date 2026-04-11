@@ -24,6 +24,7 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
   const [showStoreForm, setShowStoreForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userSearch, setUserSearch] = useState('');
 
   useEffect(() => {
     loadData();
@@ -37,7 +38,7 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
         usersApi.getAll(),
         storesApi.getAll(),
       ]);
-      setUserList(usersResult.users);
+      setUserList(usersResult.users.filter((u: { id: string }) => u.id !== currentUser.id));
       setStoreList(storesResult.stores);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
@@ -99,6 +100,14 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
     // The current API does not expose a store delete endpoint.
     alert('Exclusão de lojas não está disponível na API atual. Por favor, contate o administrador do sistema.');
   };
+
+  // ─── Derived ─────────────────────────────────────────────────────────────────
+
+  const filteredUsers = userList.filter(u =>
+    userSearch === '' ||
+    u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+    u.email.toLowerCase().includes(userSearch.toLowerCase())
+  );
 
   // ─── Render ──────────────────────────────────────────────────────────────────
 
@@ -172,8 +181,15 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
               onCancel={() => { setShowUserForm(false); setEditingUser(null); }}
             />
           )}
+          <input
+            type="text"
+            placeholder="Buscar por nome ou email..."
+            value={userSearch}
+            onChange={e => setUserSearch(e.target.value)}
+            className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-gray-400 bg-white mb-3"
+          />
           <UserTable
-            users={userList}
+            users={filteredUsers}
             onEdit={u => { setEditingUser(u); setShowUserForm(true); }}
             onDelete={handleUserDelete}
           />
@@ -194,6 +210,7 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
             stores={storeList}
             onEdit={s => { setEditingStore(s); setShowStoreForm(true); }}
             onDelete={handleStoreDelete}
+            readOnly={true}
           />
         </div>
       )}
