@@ -10,7 +10,7 @@ export interface User {
   storeId?: string;
 }
 
-export type RequestType = 'montagem' | 'motoboy';
+export type RequestType = 'montagem' | 'motoboy' | 'sedex';
 export type RequestStatus = 'pending' | 'approved' | 'rejected';
 
 export interface Request {
@@ -52,3 +52,15 @@ export interface Stats {
   thisMonthTotal: number;
   thisMonthCount: number;
 }
+
+export const REQUEST_TYPE_LABELS: Record<RequestType, string> = {
+  montagem: 'Montagem',
+  motoboy: 'Motoboy',
+  sedex: 'Sedex',
+};
+
+export const REQUEST_STATUS_LABELS: Record<RequestStatus, string> = {
+  pending: 'Pendente',
+  approved: 'Aprovado',
+  rejected: 'Reprovado',
+};
