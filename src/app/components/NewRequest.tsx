@@ -368,17 +368,21 @@ export function NewRequest({ onCancel }: NewRequestProps) {
               />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
+            <div className="space-y-2">
+              <Label htmlFor="chargedToClient">Cobrado do cliente *</Label>
+              <Select
                 id="chargedToClient"
-                checked={formData.chargedToClient}
-                onChange={(e) => handleChange('chargedToClient', e.target.checked)}
-                className="w-4 h-4 text-blue-600 rounded"
-              />
-              <Label htmlFor="chargedToClient" className="cursor-pointer">
-                Cobrado do cliente
-              </Label>
+                value={formData.chargedToClient === true ? 'sim' : formData.chargedToClient === false && formData.chargedToClient !== ('' as unknown as boolean) ? 'nao' : ''}
+                onChange={(e) => {
+                  if (e.target.value === 'sim') handleChange('chargedToClient', true);
+                  else if (e.target.value === 'nao') handleChange('chargedToClient', false);
+                }}
+                required
+              >
+                <option value="">Selecione...</option>
+                <option value="sim">Sim</option>
+                <option value="nao">Não</option>
+              </Select>
             </div>
 
             {error && (

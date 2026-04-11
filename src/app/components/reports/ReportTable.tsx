@@ -30,7 +30,7 @@ export function ReportTable({ requests, approvalsMap }: ReportTableProps) {
         style={{ gridTemplateColumns: '1fr 80px 60px 70px 80px 70px 1fr 1.5fr 70px' }}>
         <span>Loja</span><span>Tipo</span><span>OS</span><span>Data</span>
         <span className="text-right">Valor</span><span>Cobrado</span>
-        <span>Solicitante</span><span>Observação</span><span>Status</span>
+        <span>Solicitante</span><span>Justificativa</span><span>Status</span>
       </div>
 
       {requests.length === 0 ? (
@@ -39,7 +39,6 @@ export function ReportTable({ requests, approvalsMap }: ReportTableProps) {
         </div>
       ) : (
         requests.map(req => {
-          const obs = approvalsMap[req.id]?.observation ?? '—';
           const ss = STATUS_STYLES[req.status] ?? STATUS_STYLES.pending;
           return (
             <div key={req.id}
@@ -57,7 +56,7 @@ export function ReportTable({ requests, approvalsMap }: ReportTableProps) {
                 {req.chargedToClient ? 'Sim' : 'Não'}
               </span>
               <span className="text-gray-500 truncate">{req.requestedBy}</span>
-              <span className="text-gray-400 italic truncate text-[10px]">{obs}</span>
+              <span className="text-gray-400 italic truncate text-[10px]">{req.justification || '—'}</span>
               <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full w-fit"
                 style={{ background: ss.bg, color: ss.text }}>
                 {REQUEST_STATUS_LABELS[req.status as keyof typeof REQUEST_STATUS_LABELS] ?? req.status}

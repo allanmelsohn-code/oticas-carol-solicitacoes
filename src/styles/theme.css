@@ -168,8 +168,17 @@ input {
   --shadow-dropdown: 0 4px 16px rgba(0,0,0,0.08);
 
   --sidebar-width: 210px;
-  --bottomnav-height: 56px;
+  --bottomnav-height: 60px;
 }
+
+/* === TYPOGRAPHY SCALE === */
+html {
+  font-size: 14px; /* base 14px — Tailwind text-sm = 14px, text-xs = 12px */
+}
+
+/* Cards and form labels: readable at 13px+ */
+.text-\[9px\]  { font-size: 10px !important; }
+.text-\[10px\] { font-size: 11px !important; }
 
 /* === MOBILE NATIVE === */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
@@ -180,9 +189,13 @@ input {
 
 /* Touch targets — minimum 44px for all interactive elements */
 button, a, [role="button"] {
-  min-height: 44px;
+  min-height: 40px;
 }
-/* Exception for compact icon buttons */
+/* Exception for compact icon buttons and inline controls */
 .icon-btn-compact {
   min-height: unset;
+}
+/* Buttons inside cards keep proportional padding */
+button.text-xs {
+  font-size: 13px;
 }

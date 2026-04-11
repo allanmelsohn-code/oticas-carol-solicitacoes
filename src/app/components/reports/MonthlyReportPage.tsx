@@ -42,12 +42,13 @@ function exportPDF(requests: Request[], month: string) {
       fmt(r.value ?? 0),
       r.chargedToClient ? 'Sim' : 'Não',
       r.requestedBy,
+      r.justification ?? '',
       REQUEST_STATUS_LABELS[r.status as keyof typeof REQUEST_STATUS_LABELS] ?? r.status,
     ]);
 
     autoTable(doc, {
       startY: 28,
-      head: [['Loja', 'Tipo', 'OS', 'Data', 'Valor', 'Cobrado', 'Solicitante', 'Status']],
+      head: [['Loja', 'Tipo', 'OS', 'Data', 'Valor', 'Cobrado', 'Solicitante', 'Justificativa', 'Status']],
       body: rows,
       styles: { fontSize: 8, cellPadding: 3 },
       headStyles: { fillColor: [17, 24, 39], textColor: 255, fontStyle: 'bold' },
@@ -74,13 +75,14 @@ function exportXLS(requests: Request[], month: string) {
       Valor: r.value ?? 0,
       'Cobrado do cliente': r.chargedToClient ? 'Sim' : 'Não',
       Solicitante: r.requestedBy,
+      Justificativa: r.justification ?? '',
       Status: REQUEST_STATUS_LABELS[r.status as keyof typeof REQUEST_STATUS_LABELS] ?? r.status,
     }));
 
     const ws = utils.json_to_sheet(data);
     ws['!cols'] = [
       { wch: 20 }, { wch: 12 }, { wch: 10 }, { wch: 12 },
-      { wch: 14 }, { wch: 18 }, { wch: 20 }, { wch: 12 },
+      { wch: 14 }, { wch: 18 }, { wch: 20 }, { wch: 30 }, { wch: 12 },
     ];
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Relatório');
