@@ -5,14 +5,22 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Plus, Calendar, DollarSign, FileText, Check, CheckCircle } from 'lucide-react';
-import type { User, Store } from '../../types';
+import type { User, Store, Request } from '../../types';
 import { REQUEST_TYPE_LABELS } from '../../types';
 import { formatCurrency } from '../../utils/currency';
 import { stores, requests, auth } from '../../lib/api';
 import { notifyNewRequest } from '../../lib/notifications';
 
 // Select component
-const Select = ({ id, value, onChange, required, children }: any) => (
+interface SelectProps {
+  id: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  required?: boolean;
+  children: React.ReactNode;
+}
+
+const Select = ({ id, value, onChange, required, children }: SelectProps) => (
   <select
     id={id}
     value={value}
@@ -36,7 +44,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [requestNumber, setRequestNumber] = useState('');
-  const [createdRequestData, setCreatedRequestData] = useState<any>(null);
+  const [createdRequestData, setCreatedRequestData] = useState<(Request & { requestNumber?: string }) | null>(null);
 
   const [formData, setFormData] = useState({
     storeId: '',
@@ -113,7 +121,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | boolean | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
   

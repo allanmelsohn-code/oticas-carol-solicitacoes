@@ -112,13 +112,14 @@ export function ApprovalPanel({ onActionComplete }: ApprovalPanelProps) {
 
             {/* Observation input + action buttons */}
             <div className="px-4 py-3">
-              <label className="block text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                Observação{' '}
-                {processing !== req.id && (
-                  <span className="text-gray-300">(obrigatória para reprovar)</span>
-                )}
+              <label
+                htmlFor={`obs-${req.id}`}
+                className="block text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1.5"
+              >
+                Observação <span className="text-gray-300 normal-case">(obrigatória para reprovar)</span>
               </label>
               <textarea
+                id={`obs-${req.id}`}
                 rows={2}
                 placeholder="Digite uma observação..."
                 value={observations[req.id] ?? ''}
