@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Login } from './components/Login';
 import { Setup } from './components/Setup';
-import { Navigation } from './components/Navigation';
 import { Dashboard } from './components/Dashboard';
 import { NewRequest } from './components/NewRequest';
 import { ApprovalPanel } from './components/ApprovalPanel';
@@ -10,7 +9,8 @@ import { RequestsList } from './components/RequestsList';
 import { UserAdmin } from './components/UserAdmin';
 import { NotificationSettings } from './components/NotificationSettings';
 import { Help } from './components/Help';
-import { auth, getSessionId, clearSessionId } from '../lib/api';
+import { AppShell } from './components/layout/AppShell';
+import { auth, getSessionId, clearSessionId, requests } from '../lib/api';
 import { initializePushNotifications, setupPushListeners, isNativePlatform } from '../lib/pushNotifications';
 import type { User } from '../types';
 
@@ -21,6 +21,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [showSetup, setShowSetup] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
     checkAuth();
@@ -30,6 +31,16 @@ export default function App() {
       setShowSetup(true);
     }
   }, []);
+
+  const fetchPendingCount = async () => {
+    try {
+      const result = await requests.getAll();
+      const pending = result.requests.filter((r: { status: string }) => r.status === 'pending');
+      setPendingCount(pending.length);
+    } catch {
+      // silently ignore — not critical
+    }
+  };
 
   const checkAuth = async () => {
     try {
@@ -48,6 +59,7 @@ export default function App() {
       const result = await auth.getMe();
       console.log('✅ Session valid, user:', result.user);
       setUser(result.user);
+      fetchPendingCount();
     } catch (error) {
       console.log('❌ Session invalid:', error);
       clearSessionId();
@@ -60,6 +72,7 @@ export default function App() {
     console.log('✅ User logged in:', user);
     setUser(user);
     setCurrentView('dashboard');
+    fetchPendingCount();
     
     // Initialize push notifications for mobile app
     if (isNativePlatform()) {
@@ -84,13 +97,15 @@ export default function App() {
     auth.signout();
     setUser(null);
     setCurrentView('dashboard');
+    setPendingCount(0);
   };
-  
+
   const handleNavigate = (view: string, filter?: string) => {
     setCurrentView(view);
     if (filter) {
       setStatusFilter(filter);
     }
+    fetchPendingCount();
   };
 
   if (loading) {
@@ -110,26 +125,21 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation
-        currentView={currentView}
-        onNavigate={handleNavigate}
-        user={user}
-        onLogout={handleLogout}
-        onHelp={() => setShowHelp(true)}
-      />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {currentView === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
-        {currentView === 'new-request' && <NewRequest onCancel={() => setCurrentView('dashboard')} />}
-        {currentView === 'approvals' && <ApprovalPanel />}
-        {currentView === 'report' && <MonthlyReport />}
-        {currentView === 'requests' && <RequestsList statusFilter={statusFilter} />}
-        {currentView === 'user-admin' && user && <UserAdmin currentUser={user} />}
-        {currentView === 'notifications' && <NotificationSettings />}
-      </main>
-
+    <AppShell
+      user={user}
+      currentView={currentView}
+      pendingCount={pendingCount}
+      onNavigate={handleNavigate}
+      onLogout={handleLogout}
+    >
+      {currentView === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
+      {currentView === 'new-request' && <NewRequest onCancel={() => setCurrentView('dashboard')} />}
+      {currentView === 'approvals' && <ApprovalPanel />}
+      {currentView === 'report' && <MonthlyReport />}
+      {currentView === 'requests' && <RequestsList statusFilter={statusFilter} />}
+      {currentView === 'user-admin' && user && <UserAdmin currentUser={user} />}
+      {currentView === 'notifications' && <NotificationSettings />}
       {showHelp && <Help onClose={() => setShowHelp(false)} />}
-    </div>
+    </AppShell>
   );
 }
