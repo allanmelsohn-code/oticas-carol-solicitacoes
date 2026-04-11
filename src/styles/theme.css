@@ -133,3 +133,40 @@ input {
   font-weight: var(--font-weight-normal);
   line-height: 1.5;
 }
+
+/* === DESIGN SYSTEM — NEUTRO PROFISSIONAL === */
+:root {
+  --color-sidebar-bg: #111827;
+  --color-sidebar-item-active: #1f2937;
+  --color-sidebar-item-hover: #1f2937;
+  --color-sidebar-text: #9ca3af;
+  --color-sidebar-text-active: #f9fafb;
+  --color-sidebar-border: #1f2937;
+
+  --color-surface: #f9fafb;
+  --color-surface-card: #ffffff;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6b7280;
+  --color-text-placeholder: #9ca3af;
+
+  --color-accent: #111827;
+  --color-accent-hover: #1f2937;
+
+  --color-status-pending-bg: #fef9c3;
+  --color-status-pending-text: #854d0e;
+  --color-status-approved-bg: #dcfce7;
+  --color-status-approved-text: #166534;
+  --color-status-rejected-bg: #fee2e2;
+  --color-status-rejected-text: #991b1b;
+  --color-status-rejected-row: #fff9f9;
+
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-dropdown: 0 4px 16px rgba(0,0,0,0.08);
+
+  --sidebar-width: 210px;
+  --bottomnav-height: 56px;
+}
