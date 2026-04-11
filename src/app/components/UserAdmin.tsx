@@ -1,3 +1,7 @@
+// Re-export UserAdminPage as UserAdmin for backward compatibility
+export { UserAdminPage as UserAdmin } from './admin/UserAdminPage';
+
+// Legacy implementation preserved below (no longer used by App.tsx)
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
@@ -21,7 +25,7 @@ interface UserAdminProps {
   currentUser: User;
 }
 
-export function UserAdmin({ currentUser }: UserAdminProps) {
+function UserAdminLegacy({ currentUser }: UserAdminProps) {
   const [users, setUsers] = useState<UserData[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(false);
