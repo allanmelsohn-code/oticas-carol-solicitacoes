@@ -59,9 +59,9 @@ export async function removeFCMToken(fcmToken: string): Promise<void> {
     const allTokens = await kv.getByPrefix('fcm_token:');
     
     for (const item of allTokens) {
-      const tokenData: FCMToken = JSON.parse(item.value);
-      if (tokenData.fcmToken === fcmToken) {
-        await kv.del(item.key);
+      // item may be a raw string (stored via JSON.stringify) or already an object
+      const tokenData: FCMToken = typeof item === 'string' ? JSON.parse(item) : item;
+      if (tokenData?.fcmToken === fcmToken) {
         console.log(`✅ FCM token removido para ${tokenData.email}`);
         return;
       }
@@ -78,9 +78,9 @@ export async function getFCMTokensByRole(role: string): Promise<FCMToken[]> {
     const users = await kv.getByPrefix('user:');
     const tokens: FCMToken[] = [];
 
-    for (const userItem of users) {
-      const userData = JSON.parse(userItem.value);
-      
+    for (const userData of users) {
+      if (!userData || typeof userData !== 'object') continue;
+
       if (userData.role === role) {
         const token = await getFCMToken(userData.id);
         if (token) {
