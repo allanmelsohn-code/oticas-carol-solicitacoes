@@ -165,7 +165,7 @@ app.post("/make-server-b2c42f95/stores", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
-    if (!user || user.role !== 'approver') {
+    if (!user || user.role !== 'approver' && user.role !== 'approver_store') {
       return c.json({ error: 'Only approvers can create stores' }, 403);
     }
 
@@ -194,7 +194,7 @@ app.post("/make-server-b2c42f95/users", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
-    if (!user || user.role !== 'approver') {
+    if (!user || user.role !== 'approver' && user.role !== 'approver_store') {
       return c.json({ error: 'Only approvers can create users' }, 403);
     }
 
@@ -230,10 +230,10 @@ app.post("/make-server-b2c42f95/users", async (c) => {
       id: userId,
       email,
       name,
-      role: role as 'store' | 'approver' | 'viewer',
-      storeId: role === 'store' ? storeId : undefined,
-      storeName: role === 'store' ? storeName : undefined,
-      storeCode: role === 'store' ? storeCode : undefined,
+      role: role as 'store' | 'approver' | 'approver_store' | 'viewer',
+      storeId: (role === 'store' || role === 'approver_store') ? storeId : undefined,
+      storeName: (role === 'store' || role === 'approver_store') ? storeName : undefined,
+      storeCode: (role === 'store' || role === 'approver_store') ? storeCode : undefined,
     };
 
     await kv.set(`user:${userId}`, newUser);
@@ -254,7 +254,7 @@ app.put("/make-server-b2c42f95/users/:email", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
-    if (!user || user.role !== 'approver') {
+    if (!user || user.role !== 'approver' && user.role !== 'approver_store') {
       return c.json({ error: 'Only approvers can update users' }, 403);
     }
 
@@ -284,9 +284,9 @@ app.put("/make-server-b2c42f95/users/:email", async (c) => {
       ...targetUser,
       name: name || targetUser.name,
       role: role || targetUser.role,
-      storeId: role === 'store' ? storeId : undefined,
-      storeName: role === 'store' ? storeName : undefined,
-      storeCode: role === 'store' ? storeCode : undefined,
+      storeId: (role === 'store' || role === 'approver_store') ? storeId : undefined,
+      storeName: (role === 'store' || role === 'approver_store') ? storeName : undefined,
+      storeCode: (role === 'store' || role === 'approver_store') ? storeCode : undefined,
     };
     
     // Remove password from user object (stored separately)
@@ -318,7 +318,7 @@ app.get("/make-server-b2c42f95/users", async (c) => {
     console.log('👤 Authenticated user:', user ? user.email : 'NOT AUTHENTICATED');
     console.log('👤 User role:', user?.role);
     
-    if (!user || user.role !== 'approver') {
+    if (!user || user.role !== 'approver' && user.role !== 'approver_store') {
       console.log('❌ Access denied - user role:', user?.role);
       return c.json({ error: 'Only approvers can list users' }, 403);
     }
@@ -344,7 +344,7 @@ app.delete("/make-server-b2c42f95/users/:email", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
-    if (!user || user.role !== 'approver') {
+    if (!user || user.role !== 'approver' && user.role !== 'approver_store') {
       return c.json({ error: 'Only approvers can delete users' }, 403);
     }
 
@@ -412,7 +412,7 @@ app.post("/make-server-b2c42f95/requests", async (c) => {
     (async () => {
       try {
         const allUsers = await kv.getByPrefix('user:');
-        const approvers = allUsers.filter((u: { role: string }) => u.role === 'approver');
+        const approvers = allUsers.filter((u: { role: string }) => u.role === 'approver' || u.role === 'approver_store');
         const emailData = {
           id: request.id,
           storeName: request.storeName,
@@ -601,7 +601,8 @@ app.post("/make-server-b2c42f95/approvals", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
-    if (!user || user.role !== 'approver') {
+    const canApprove = user && (user.role === 'approver' || user.role === 'approver_store');
+    if (!canApprove) {
       return c.json({ error: 'Only approvers can approve/reject requests' }, 403);
     }
 
@@ -635,7 +636,7 @@ app.post("/make-server-b2c42f95/approvals", async (c) => {
       try {
         const allUsers = await kv.getByPrefix('user:');
         const requester = allUsers.find((u: { role: string; storeId: string }) =>
-          u.role === 'store' && u.storeId === request.storeId
+          (u.role === 'store' || u.role === 'approver_store') && u.storeId === request.storeId
         );
         if (requester) {
           const emailData = {
@@ -663,7 +664,7 @@ app.post("/make-server-b2c42f95/approvals", async (c) => {
     // Send push notification to store user who created the request
     // Find the user who created the request by storeId
     const allUsers = await kv.getByPrefix('user:');
-    const storeUser = allUsers.find((u: User) => u.role === 'store' && u.storeId === request.storeId);
+    const storeUser = allUsers.find((u: User) => (u.role === 'store' || u.role === 'approver_store') && u.storeId === request.storeId);
     
     if (storeUser) {
       if (action === 'approved') {
@@ -803,7 +804,7 @@ app.post("/make-server-b2c42f95/admin/clear-requests", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
-    if (!user || user.role !== 'approver') {
+    if (!user || user.role !== 'approver' && user.role !== 'approver_store') {
       return c.json({ error: 'Apenas aprovadores podem limpar solicitações' }, 403);
     }
 

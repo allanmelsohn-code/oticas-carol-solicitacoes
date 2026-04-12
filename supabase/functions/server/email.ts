@@ -2,7 +2,8 @@
 import { Resend } from 'npm:resend';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY') ?? '');
-const FROM = 'Óticas Carol <notificacoes@oticascarol.com.br>';
+// Use RESEND_FROM env var se configurado (domínio verificado), senão usa o domínio de teste do Resend
+const FROM = Deno.env.get('RESEND_FROM') ?? 'Óticas Carol <onboarding@resend.dev>';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
