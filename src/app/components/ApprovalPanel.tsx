@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { CheckCircle, XCircle, Calendar, DollarSign, Hash, User, Clock, CheckSquare, Square, ChevronsUpDown } from 'lucide-react';
 import { requests as requestsApi, approvals as approvalsApi } from '../../lib/api';
 import { REQUEST_TYPE_LABELS } from '../../types';
@@ -6,19 +6,26 @@ import type { Request } from '../../types';
 
 interface ApprovalPanelProps {
   onActionComplete?: () => void;
+  highlightId?: string;
 }
 
-export function ApprovalPanel({ onActionComplete }: ApprovalPanelProps) {
+export function ApprovalPanel({ onActionComplete, highlightId }: ApprovalPanelProps) {
   const [pending, setPending] = useState<Request[]>([]);
   const [observations, setObservations] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<string | null>(null);
   const [bulkProcessing, setBulkProcessing] = useState(false);
+  const [glareId, setGlareId] = useState<string | null>(null);
 
   // Bulk select state
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkObs, setBulkObs] = useState('');
   const [showBulkBar, setShowBulkBar] = useState(false);
+
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const setCardRef = useCallback((id: string) => (el: HTMLDivElement | null) => {
+    cardRefs.current[id] = el;
+  }, []);
 
   const fetchPending = async () => {
     try {
@@ -32,6 +39,17 @@ export function ApprovalPanel({ onActionComplete }: ApprovalPanelProps) {
   };
 
   useEffect(() => { fetchPending(); }, []);
+
+  // Scroll to and highlight target card after load
+  useEffect(() => {
+    if (!highlightId || loading) return;
+    setGlareId(highlightId);
+    const t = setTimeout(() => {
+      cardRefs.current[highlightId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => setGlareId(null), 2500);
+    }, 150);
+    return () => clearTimeout(t);
+  }, [highlightId, loading]);
 
   // Show bulk bar whenever something is selected
   useEffect(() => {
@@ -186,11 +204,15 @@ export function ApprovalPanel({ onActionComplete }: ApprovalPanelProps) {
         pending.map(req => (
           <div
             key={req.id}
-            className="bg-white border border-gray-200 rounded-xl overflow-hidden transition-all"
+            ref={setCardRef(req.id)}
+            className="bg-white border rounded-xl overflow-hidden transition-all"
             style={{
-              boxShadow: 'var(--shadow-card)',
-              borderColor: selected.has(req.id) ? '#6366f1' : undefined,
-              borderWidth: selected.has(req.id) ? 2 : 1,
+              boxShadow: glareId === req.id
+                ? '0 0 0 2px #f59e0b, 0 4px 16px rgba(251,191,36,0.3)'
+                : 'var(--shadow-card)',
+              borderColor: glareId === req.id ? '#fbbf24' : selected.has(req.id) ? '#6366f1' : '#e5e7eb',
+              borderWidth: (glareId === req.id || selected.has(req.id)) ? 2 : 1,
+              animation: glareId === req.id ? 'approval-glare 2.5s ease-out forwards' : undefined,
             }}
           >
             {/* Card header */}
@@ -284,6 +306,14 @@ export function ApprovalPanel({ onActionComplete }: ApprovalPanelProps) {
           </div>
         ))
       )}
+
+      <style>{`
+        @keyframes approval-glare {
+          0%   { background: #fefce8; }
+          40%  { background: #fef9c3; }
+          100% { background: white; }
+        }
+      `}</style>
     </div>
   );
 }

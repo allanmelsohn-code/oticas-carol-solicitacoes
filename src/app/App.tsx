@@ -139,7 +139,7 @@ export default function App() {
     >
       {currentView === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
       {currentView === 'new-request' && <NewRequest onCancel={() => setCurrentView('dashboard')} />}
-      {currentView === 'approvals' && <ApprovalPanel />}
+      {currentView === 'approvals' && <ApprovalPanel highlightId={highlightId} />}
       {currentView === 'report' && <MonthlyReport />}
       {currentView === 'requests' && <RequestsList statusFilter={statusFilter} highlightId={highlightId} />}
       {currentView === 'user-admin' && user && <UserAdmin currentUser={user} />}

@@ -126,7 +126,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           recentRequests.map(req => (
             <button
               key={req.id}
-              onClick={() => onNavigate('requests', 'all', req.id)}
+              onClick={() => req.status === 'pending' ? onNavigate('approvals', undefined, req.id) : onNavigate('requests', 'all', req.id)}
               className="w-full flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors text-left icon-btn-compact"
             >
               <div className="flex-1 min-w-0">
