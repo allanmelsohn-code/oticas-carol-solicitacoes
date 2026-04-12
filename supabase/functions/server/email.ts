@@ -76,7 +76,7 @@ export async function sendNewRequestEmail(req: RequestEmailData, approverEmail: 
     </p>
     ${requestDetailsTable(req)}
     <p style="font-size:11px;color:#6b7280;font-style:italic;margin-bottom:16px">"${req.justification}"</p>
-    <a href="${Deno.env.get('APP_URL') ?? 'https://oticascarol.app'}"
+    <a href="${Deno.env.get('APP_URL') ?? 'https://oticas-carol-solicitacoes.vercel.app'}"
        style="display:inline-block;background:#111827;color:white;font-size:11px;font-weight:600;padding:9px 16px;border-radius:6px;text-decoration:none">
       Revisar e Aprovar →
     </a>`;
@@ -95,7 +95,7 @@ export async function sendApprovedEmail(req: RequestEmailData, requesterEmail: s
       Sua solicitação foi <strong style="color:#166534">aprovada</strong> por ${approverName}:
     </p>
     ${requestDetailsTable(req)}
-    <a href="${Deno.env.get('APP_URL') ?? 'https://oticascarol.app'}"
+    <a href="${Deno.env.get('APP_URL') ?? 'https://oticas-carol-solicitacoes.vercel.app'}"
        style="display:inline-block;background:#111827;color:white;font-size:11px;font-weight:600;padding:9px 16px;border-radius:6px;text-decoration:none">
       Ver Solicitação →
     </a>`;
@@ -123,7 +123,7 @@ export async function sendRejectedEmail(
       <div style="font-size:10px;font-weight:700;color:#dc2626;margin-bottom:4px">Motivo da reprovação:</div>
       <div style="font-size:11px;color:#991b1b">${reason}</div>
     </div>
-    <a href="${Deno.env.get('APP_URL') ?? 'https://oticascarol.app'}"
+    <a href="${Deno.env.get('APP_URL') ?? 'https://oticas-carol-solicitacoes.vercel.app'}"
        style="display:inline-block;background:#dc2626;color:white;font-size:11px;font-weight:600;padding:9px 16px;border-radius:6px;text-decoration:none">
       Ver Solicitação →
     </a>`;
