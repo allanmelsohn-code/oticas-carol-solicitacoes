@@ -6,7 +6,7 @@ import { REQUEST_TYPE_LABELS, REQUEST_STATUS_LABELS } from '../../types';
 import type { Request } from '../../types';
 
 interface DashboardProps {
-  onNavigate: (view: string, filter?: string) => void;
+  onNavigate: (view: string, filter?: string, highlightId?: string) => void;
 }
 
 interface DashStats {
@@ -43,9 +43,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   }, []);
 
   const statCards = [
-    { label: 'Pendentes',  value: stats.pending,  icon: Clock,        color: '#d97706', borderColor: '#fde68a', bg: '#fffbeb' },
-    { label: 'Aprovados',  value: stats.approved, icon: CheckCircle,  color: '#16a34a', borderColor: '#e5e7eb', bg: 'white' },
-    { label: 'Reprovados', value: stats.rejected, icon: XCircle,      color: '#dc2626', borderColor: '#e5e7eb', bg: 'white' },
+    { label: 'Pendentes',  value: stats.pending,  icon: Clock,        color: '#d97706', borderColor: '#fde68a', bg: '#fffbeb', filter: 'pending' },
+    { label: 'Aprovados',  value: stats.approved, icon: CheckCircle,  color: '#16a34a', borderColor: '#e5e7eb', bg: 'white',   filter: 'approved' },
+    { label: 'Reprovados', value: stats.rejected, icon: XCircle,      color: '#dc2626', borderColor: '#e5e7eb', bg: 'white',   filter: 'rejected' },
     {
       label: 'Total mês',
       value: stats.thisMonthTotal > 0
@@ -55,6 +55,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       color: '#6b7280',
       borderColor: '#e5e7eb',
       bg: 'white',
+      filter: 'all',
     },
   ];
 
@@ -80,14 +81,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </button>
       </div>
 
-      {/* Stat cards */}
+      {/* Stat cards — clicáveis, abrem lista filtrada */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {statCards.map(card => {
           const Icon = card.icon;
           return (
-            <div
+            <button
               key={card.label}
-              className="rounded-xl p-4 border"
+              onClick={() => onNavigate('requests', card.filter)}
+              className="rounded-xl p-4 border text-left transition-all hover:scale-[1.02] hover:shadow-md active:scale-[0.98] icon-btn-compact"
               style={{ background: card.bg, borderColor: card.borderColor, boxShadow: 'var(--shadow-card)' }}
             >
               <div className="flex items-center justify-between mb-2">
@@ -97,7 +99,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 <Icon size={13} style={{ color: card.color }} />
               </div>
               <div className="text-2xl font-bold text-gray-900">{card.value}</div>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -110,8 +112,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
           <span className="text-sm font-semibold text-gray-700">Últimas solicitações</span>
           <button
-            onClick={() => onNavigate('requests')}
-            className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-0.5"
+            onClick={() => onNavigate('requests', 'all')}
+            className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-0.5 icon-btn-compact"
           >
             Ver todas <ChevronRight size={12} />
           </button>
@@ -122,9 +124,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           </div>
         ) : (
           recentRequests.map(req => (
-            <div
+            <button
               key={req.id}
-              className="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0"
+              onClick={() => onNavigate('requests', 'all', req.id)}
+              className="w-full flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors text-left icon-btn-compact"
             >
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-gray-800 truncate">{req.storeName}</div>
@@ -136,7 +139,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(req.value ?? 0)}
               </div>
               <StatusBadge status={req.status} />
-            </div>
+              <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
+            </button>
           ))
         )}
       </div>

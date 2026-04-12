@@ -18,6 +18,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState<AppView>('dashboard');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [highlightId, setHighlightId] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [showSetup, setShowSetup] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
@@ -106,11 +107,10 @@ export default function App() {
     setPendingCount(0);
   };
 
-  const handleNavigate = (view: AppView, filter?: string) => {
+  const handleNavigate = (view: AppView, filter?: string, hId?: string) => {
     setCurrentView(view);
-    if (filter) {
-      setStatusFilter(filter);
-    }
+    if (filter) setStatusFilter(filter);
+    setHighlightId(hId);
   };
 
   if (loading) {
@@ -141,7 +141,7 @@ export default function App() {
       {currentView === 'new-request' && <NewRequest onCancel={() => setCurrentView('dashboard')} />}
       {currentView === 'approvals' && <ApprovalPanel />}
       {currentView === 'report' && <MonthlyReport />}
-      {currentView === 'requests' && <RequestsList statusFilter={statusFilter} />}
+      {currentView === 'requests' && <RequestsList statusFilter={statusFilter} highlightId={highlightId} />}
       {currentView === 'user-admin' && user && <UserAdmin currentUser={user} />}
       {currentView === 'notifications' && <NotificationSettings />}
     </AppShell>
