@@ -31,7 +31,7 @@ export function UserForm({ initial, stores, onSubmit, onCancel }: UserFormProps)
         email,
         role,
         storeId: (role === 'store' || role === 'approver_store') ? storeId : undefined,
-        password: isNew ? password : undefined,
+        password: password || undefined,
       });
     } finally {
       setSaving(false);
@@ -68,12 +68,19 @@ export function UserForm({ initial, stores, onSubmit, onCancel }: UserFormProps)
             </select>
           </div>
         )}
-        {isNew && (
-          <div className="flex flex-col gap-1">
-            <label className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Senha *</label>
-            <input className={inputCls} type="password" value={password} onChange={e => setPassword(e.target.value)} required={isNew} />
-          </div>
-        )}
+        <div className="flex flex-col gap-1">
+          <label className="text-[9px] font-bold uppercase tracking-wider text-gray-400">
+            Senha {isNew ? '*' : '(deixe em branco para não alterar)'}
+          </label>
+          <input
+            className={inputCls}
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required={isNew}
+            placeholder={isNew ? '' : 'Nova senha...'}
+          />
+        </div>
       </div>
       <div className="flex gap-2 justify-end pt-1">
         <button type="button" onClick={onCancel} className="text-xs px-3 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">

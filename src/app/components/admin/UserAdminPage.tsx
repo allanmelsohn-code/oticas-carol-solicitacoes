@@ -57,6 +57,7 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
         name: data.name,
         role: data.role,
         storeId: data.storeId,
+        password: data.password,
       });
     } else {
       // Create
