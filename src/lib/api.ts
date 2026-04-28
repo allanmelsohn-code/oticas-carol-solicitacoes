@@ -158,6 +158,34 @@ export const approvals = {
   },
 };
 
+// Service Prices API
+export const servicePrices = {
+  async getAll(type?: 'montagem' | 'motoboy') {
+    const query = type ? `?type=${type}` : '';
+    return apiCall(`/service-prices${query}`);
+  },
+
+  async create(data: { description: string; price: number; type: 'montagem' | 'motoboy' }) {
+    return apiCall('/service-prices', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async update(id: string, data: { description?: string; price?: number; type?: 'montagem' | 'motoboy' }) {
+    return apiCall(`/service-prices/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async remove(id: string) {
+    return apiCall(`/service-prices/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
 // Reports API
 export const reports = {
   async getMonthly(filters: {
