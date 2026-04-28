@@ -46,6 +46,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
   const [requestNumber, setRequestNumber] = useState('');
   const [createdRequestData, setCreatedRequestData] = useState<(Request & { requestNumber?: string }) | null>(null);
   const [priceOptions, setPriceOptions] = useState<ServicePrice[]>([]);
+  const [pricesLoadError, setPricesLoadError] = useState(false);
 
   const [formData, setFormData] = useState({
     storeId: '',
@@ -68,13 +69,17 @@ export function NewRequest({ onCancel }: NewRequestProps) {
       const userResult = await auth.getMe();
       setCurrentUser(userResult.user);
 
-      // Load all stores and prices in parallel
-      const [result, pricesData] = await Promise.all([
-        stores.getAll(),
-        servicePricesApi.getAll(),
-      ]);
+      // Load stores
+      const result = await stores.getAll();
       setStoresList(result.stores);
-      setPriceOptions(pricesData.prices ?? []);
+
+      // Load prices separately so a prices failure doesn't block the whole form
+      try {
+        const pricesData = await servicePricesApi.getAll();
+        setPriceOptions(pricesData.prices ?? []);
+      } catch {
+        setPricesLoadError(true);
+      }
 
       // If user is a store user, find their store and pre-select it
       if (userResult.user.role === 'store' && userResult.user.storeId) {
@@ -93,6 +98,12 @@ export function NewRequest({ onCancel }: NewRequestProps) {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    if (!formData.value || isNaN(parseFloat(formData.value))) {
+      setError('Informe o valor da solicitação.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const result = await requests.create({
@@ -149,6 +160,58 @@ export function NewRequest({ onCancel }: NewRequestProps) {
   
   const handlePrint = () => {
     window.print();
+  };
+
+  const renderValueField = () => {
+    if (formData.type === 'sedex') {
+      return (
+        <Input
+          id="value"
+          type="number"
+          step="0.01"
+          value={formData.value}
+          onChange={(e) => handleChange('value', e.target.value)}
+          placeholder="0.00"
+          required
+        />
+      );
+    }
+    const options = priceOptions.filter(p => p.type === formData.type);
+    if (options.length === 0) {
+      return (
+        <div className="space-y-1">
+          <Input
+            id="value"
+            type="number"
+            step="0.01"
+            value={formData.value}
+            onChange={(e) => handleChange('value', e.target.value)}
+            placeholder="0.00"
+            required
+          />
+          <p className="text-xs text-amber-600">
+            {pricesLoadError
+              ? 'Não foi possível carregar a tabela de preços — informe o valor manualmente.'
+              : 'Tabela de preços não configurada — informe o valor manualmente.'}
+          </p>
+        </div>
+      );
+    }
+    return (
+      <Select
+        id="value"
+        value={formData.value}
+        onChange={(e) => handleChange('value', e.target.value)}
+        required
+      >
+        <option value="">Selecione o serviço</option>
+        {options.map(p => (
+          <option key={p.id} value={String(p.price)}>
+            {p.description} — {formatCurrency(p.price)}
+          </option>
+        ))}
+      </Select>
+    );
   };
 
   if (success && createdRequestData) {
@@ -304,50 +367,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
 
               <div className="space-y-2">
                 <Label htmlFor="value">Valor (R$) *</Label>
-                {formData.type === 'sedex' ? (
-                  <Input
-                    id="value"
-                    type="number"
-                    step="0.01"
-                    value={formData.value}
-                    onChange={(e) => handleChange('value', e.target.value)}
-                    placeholder="0.00"
-                    required
-                  />
-                ) : (() => {
-                  const options = priceOptions.filter(p => p.type === formData.type);
-                  if (options.length === 0) {
-                    return (
-                      <div className="space-y-1">
-                        <Input
-                          id="value"
-                          type="number"
-                          step="0.01"
-                          value={formData.value}
-                          onChange={(e) => handleChange('value', e.target.value)}
-                          placeholder="0.00"
-                          required
-                        />
-                        <p className="text-xs text-amber-600">Tabela de preços não configurada — informe o valor manualmente.</p>
-                      </div>
-                    );
-                  }
-                  return (
-                    <Select
-                      id="value"
-                      value={formData.value}
-                      onChange={(e) => handleChange('value', e.target.value)}
-                      required
-                    >
-                      <option value="">Selecione o serviço</option>
-                      {options.map(p => (
-                        <option key={p.id} value={String(p.price)}>
-                          {p.description} — {formatCurrency(p.price)}
-                        </option>
-                      ))}
-                    </Select>
-                  );
-                })()}
+                {renderValueField()}
               </div>
 
               <div className="space-y-2">
