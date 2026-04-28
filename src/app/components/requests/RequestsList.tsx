@@ -1,7 +1,7 @@
 // src/app/components/requests/RequestsList.tsx
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Plus } from 'lucide-react';
-import { requests as requestsApi } from '../../../lib/api';
+import { requests as requestsApi, approvals as approvalsApi } from '../../../lib/api';
 import type { Request, ApprovalInfo } from '../../../types';
 import { RequestRow } from './RequestRow';
 
@@ -83,7 +83,19 @@ export function RequestsList({ statusFilter = 'all', highlightId, onNavigate }: 
   }, [highlightId, loading]);
 
   const filtered = filter === 'all' ? allRequests : allRequests.filter(r => r.status === filter);
-  const handleToggle = (id: string) => setOpenId(prev => prev === id ? null : id);
+  const handleToggle = async (id: string) => {
+    setOpenId(prev => prev === id ? null : id);
+
+    // Busca approval apenas uma vez por request
+    if (approvalsMap[id] === undefined) {
+      try {
+        const data = await approvalsApi.get(id);
+        setApprovalsMap(prev => ({ ...prev, [id]: data.approval ?? null }));
+      } catch {
+        setApprovalsMap(prev => ({ ...prev, [id]: null }));
+      }
+    }
+  };
 
   const setRowRef = useCallback((id: string) => (el: HTMLDivElement | null) => {
     rowRefs.current[id] = el;
