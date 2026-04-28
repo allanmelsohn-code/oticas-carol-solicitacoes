@@ -227,7 +227,7 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
       )}
 
       {/* Prices tab */}
-      {!loading && tab === 'prices' && (
+      {tab === 'prices' && (
         <ServicePricePage />
       )}
     </div>
