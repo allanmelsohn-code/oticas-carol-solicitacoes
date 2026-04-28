@@ -69,6 +69,17 @@ export function RequestsList({ statusFilter = 'all', highlightId, onNavigate }: 
     setOpenId(highlightId);
     setGlareId(highlightId);
 
+    // Fetch approval for highlighted row if not yet loaded
+    if (approvalsMap[highlightId] === undefined) {
+      approvalsApi.get(highlightId)
+        .then((data: { approval?: ApprovalInfo | null }) =>
+          setApprovalsMap(prev => ({ ...prev, [highlightId]: data.approval ?? null }))
+        )
+        .catch(() =>
+          setApprovalsMap(prev => ({ ...prev, [highlightId]: null }))
+        );
+    }
+
     // Scroll after a short delay to allow render
     const t = setTimeout(() => {
       const el = rowRefs.current[highlightId];
@@ -91,7 +102,8 @@ export function RequestsList({ statusFilter = 'all', highlightId, onNavigate }: 
       try {
         const data = await approvalsApi.get(id);
         setApprovalsMap(prev => ({ ...prev, [id]: data.approval ?? null }));
-      } catch {
+      } catch (err) {
+        console.error('[RequestsList] Failed to fetch approval for', id, err);
         setApprovalsMap(prev => ({ ...prev, [id]: null }));
       }
     }
