@@ -285,8 +285,13 @@ export function NewRequest({ onCancel }: NewRequestProps) {
                 <Label htmlFor="osNumber">Número da OS *</Label>
                 <Input
                   id="osNumber"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={formData.osNumber}
-                  onChange={(e) => handleChange('osNumber', e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (/^\d*$/.test(v)) handleChange('osNumber', v);
+                  }}
                   placeholder="Ex: 12345"
                   required
                 />
