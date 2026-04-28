@@ -71,3 +71,10 @@ export const REQUEST_STATUS_LABELS: Record<RequestStatus, string> = {
   approved: 'Aprovado',
   rejected: 'Reprovado',
 };
+
+export interface ServicePrice {
+  id: string;
+  description: string;
+  price: number;
+  type: 'montagem' | 'motoboy';
+}
