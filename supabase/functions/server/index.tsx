@@ -698,6 +698,28 @@ app.post("/make-server-b2c42f95/approvals", async (c) => {
   }
 });
 
+// Get approval for a specific request
+app.get("/make-server-b2c42f95/approvals/:requestId", async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user) {
+      return c.json({ error: 'Não autenticado' }, 401);
+    }
+
+    const requestId = c.req.param('requestId');
+    const approval = await kv.get(`approval:${requestId}`);
+
+    if (!approval) {
+      return c.json({ error: 'Approval not found' }, 404);
+    }
+
+    return c.json({ approval });
+  } catch (error) {
+    console.log('Get approval error:', error);
+    return c.json({ error: 'Failed to get approval' }, 500);
+  }
+});
+
 // ===== REPORTS ROUTES =====
 
 // Get monthly report
