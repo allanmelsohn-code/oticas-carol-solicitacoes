@@ -706,8 +706,8 @@ app.get("/make-server-b2c42f95/approvals/:requestId", async (c) => {
 
     const requestId = c.req.param('requestId');
 
-    // Scope check: store users may only see approvals for their own requests
-    if (user.role === 'store') {
+    // Scope check: store and approver_store users may only see approvals for their own store
+    if (user.role === 'store' || user.role === 'approver_store') {
       const request = await kv.get(`request:${requestId}`);
       if (!request || user.storeId !== request.storeId) {
         return c.json({ error: 'Não encontrado' }, 404);
@@ -715,12 +715,7 @@ app.get("/make-server-b2c42f95/approvals/:requestId", async (c) => {
     }
 
     const approval = await kv.get(`approval:${requestId}`);
-
-    if (!approval) {
-      return c.json({ error: 'Approval not found' }, 404);
-    }
-
-    return c.json({ approval });
+    return c.json({ approval: approval ?? null });
   } catch (error) {
     console.log('Get approval error:', error);
     return c.json({ error: 'Failed to get approval' }, 500);
@@ -766,9 +761,13 @@ app.post("/make-server-b2c42f95/service-prices", async (c) => {
     if (!description || price == null || !type) {
       return c.json({ error: 'description, price e type são obrigatórios' }, 400);
     }
+    const numericPrice = Number(price);
+    if (isNaN(numericPrice) || numericPrice <= 0) {
+      return c.json({ error: 'price deve ser um número positivo' }, 400);
+    }
 
     const id = crypto.randomUUID();
-    const servicePrice = { id, description, price: Number(price), type };
+    const servicePrice = { id, description, price: numericPrice, type };
     await kv.set(`service-price:${id}`, servicePrice);
 
     return c.json({ servicePrice }, 201);
@@ -792,6 +791,12 @@ app.put("/make-server-b2c42f95/service-prices/:id", async (c) => {
     if (!existing) return c.json({ error: 'Service price not found' }, 404);
 
     const { description, price, type } = await c.req.json();
+    if (price != null) {
+      const numericPrice = Number(price);
+      if (isNaN(numericPrice) || numericPrice <= 0) {
+        return c.json({ error: 'price deve ser um número positivo' }, 400);
+      }
+    }
     const updated = {
       ...existing,
       ...(description != null && { description }),

@@ -95,10 +95,11 @@ export function RequestsList({ statusFilter = 'all', highlightId, onNavigate }: 
 
   const filtered = filter === 'all' ? allRequests : allRequests.filter(r => r.status === filter);
   const handleToggle = async (id: string) => {
+    const isClosing = openId === id;
     setOpenId(prev => prev === id ? null : id);
 
-    // Busca approval apenas uma vez por request
-    if (approvalsMap[id] === undefined) {
+    // Busca approval apenas uma vez por request, e somente ao abrir
+    if (!isClosing && approvalsMap[id] === undefined) {
       try {
         const data = await approvalsApi.get(id);
         setApprovalsMap(prev => ({ ...prev, [id]: data.approval ?? null }));
