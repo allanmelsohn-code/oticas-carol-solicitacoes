@@ -727,6 +727,107 @@ app.get("/make-server-b2c42f95/approvals/:requestId", async (c) => {
   }
 });
 
+// ===== SERVICE PRICE ROUTES =====
+
+// Get all service prices (optionally filtered by type)
+app.get("/make-server-b2c42f95/service-prices", async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user) return c.json({ error: 'Não autenticado' }, 401);
+
+    const typeFilter = c.req.query('type');
+    let prices = await kv.getByPrefix('service-price:');
+
+    if (typeFilter) {
+      prices = prices.filter((p: { type: string }) => p.type === typeFilter);
+    }
+
+    prices.sort((a: { description: string }, b: { description: string }) =>
+      a.description.localeCompare(b.description)
+    );
+
+    return c.json({ prices });
+  } catch (error) {
+    console.log('Get service prices error:', error);
+    return c.json({ error: 'Failed to get service prices' }, 500);
+  }
+});
+
+// Create service price (approver only)
+app.post("/make-server-b2c42f95/service-prices", async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user) return c.json({ error: 'Não autenticado' }, 401);
+    if (user.role !== 'approver' && user.role !== 'approver_store') {
+      return c.json({ error: 'Apenas aprovadores podem gerenciar a tabela de preços' }, 403);
+    }
+
+    const { description, price, type } = await c.req.json();
+    if (!description || price == null || !type) {
+      return c.json({ error: 'description, price e type são obrigatórios' }, 400);
+    }
+
+    const id = crypto.randomUUID();
+    const servicePrice = { id, description, price: Number(price), type };
+    await kv.set(`service-price:${id}`, servicePrice);
+
+    return c.json({ servicePrice }, 201);
+  } catch (error) {
+    console.log('Create service price error:', error);
+    return c.json({ error: 'Failed to create service price' }, 500);
+  }
+});
+
+// Update service price (approver only)
+app.put("/make-server-b2c42f95/service-prices/:id", async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user) return c.json({ error: 'Não autenticado' }, 401);
+    if (user.role !== 'approver' && user.role !== 'approver_store') {
+      return c.json({ error: 'Apenas aprovadores podem gerenciar a tabela de preços' }, 403);
+    }
+
+    const id = c.req.param('id');
+    const existing = await kv.get(`service-price:${id}`);
+    if (!existing) return c.json({ error: 'Service price not found' }, 404);
+
+    const { description, price, type } = await c.req.json();
+    const updated = {
+      ...existing,
+      ...(description != null && { description }),
+      ...(price != null && { price: Number(price) }),
+      ...(type != null && { type }),
+    };
+    await kv.set(`service-price:${id}`, updated);
+
+    return c.json({ servicePrice: updated });
+  } catch (error) {
+    console.log('Update service price error:', error);
+    return c.json({ error: 'Failed to update service price' }, 500);
+  }
+});
+
+// Delete service price (approver only)
+app.delete("/make-server-b2c42f95/service-prices/:id", async (c) => {
+  try {
+    const user = await authenticateRequest(c);
+    if (!user) return c.json({ error: 'Não autenticado' }, 401);
+    if (user.role !== 'approver' && user.role !== 'approver_store') {
+      return c.json({ error: 'Apenas aprovadores podem gerenciar a tabela de preços' }, 403);
+    }
+
+    const id = c.req.param('id');
+    const existing = await kv.get(`service-price:${id}`);
+    if (!existing) return c.json({ error: 'Service price not found' }, 404);
+
+    await kv.del(`service-price:${id}`);
+    return c.json({ success: true });
+  } catch (error) {
+    console.log('Delete service price error:', error);
+    return c.json({ error: 'Failed to delete service price' }, 500);
+  }
+});
+
 // ===== REPORTS ROUTES =====
 
 // Get monthly report
