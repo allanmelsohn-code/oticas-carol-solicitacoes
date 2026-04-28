@@ -5,10 +5,10 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Plus, Calendar, DollarSign, FileText, Check, CheckCircle } from 'lucide-react';
-import type { User, Store, Request } from '../../types';
+import type { User, Store, Request, ServicePrice } from '../../types';
 import { REQUEST_TYPE_LABELS } from '../../types';
 import { formatCurrency } from '../../utils/currency';
-import { stores, requests, auth } from '../../lib/api';
+import { stores, requests, auth, servicePrices as servicePricesApi } from '../../lib/api';
 import { notifyNewRequest } from '../../lib/notifications';
 
 // Select component
@@ -45,6 +45,7 @@ export function NewRequest({ onCancel }: NewRequestProps) {
   const [error, setError] = useState('');
   const [requestNumber, setRequestNumber] = useState('');
   const [createdRequestData, setCreatedRequestData] = useState<(Request & { requestNumber?: string }) | null>(null);
+  const [priceOptions, setPriceOptions] = useState<ServicePrice[]>([]);
 
   const [formData, setFormData] = useState({
     storeId: '',
@@ -66,11 +67,15 @@ export function NewRequest({ onCancel }: NewRequestProps) {
       // Get current user
       const userResult = await auth.getMe();
       setCurrentUser(userResult.user);
-      
-      // Load all stores
-      const result = await stores.getAll();
+
+      // Load all stores and prices in parallel
+      const [result, pricesData] = await Promise.all([
+        stores.getAll(),
+        servicePricesApi.getAll(),
+      ]);
       setStoresList(result.stores);
-      
+      setPriceOptions(pricesData.prices ?? []);
+
       // If user is a store user, find their store and pre-select it
       if (userResult.user.role === 'store' && userResult.user.storeId) {
         const store = result.stores.find(s => s.id === userResult.user.storeId);
@@ -299,15 +304,50 @@ export function NewRequest({ onCancel }: NewRequestProps) {
 
               <div className="space-y-2">
                 <Label htmlFor="value">Valor (R$) *</Label>
-                <Input
-                  id="value"
-                  type="number"
-                  step="0.01"
-                  value={formData.value}
-                  onChange={(e) => handleChange('value', e.target.value)}
-                  placeholder="0.00"
-                  required
-                />
+                {formData.type === 'sedex' ? (
+                  <Input
+                    id="value"
+                    type="number"
+                    step="0.01"
+                    value={formData.value}
+                    onChange={(e) => handleChange('value', e.target.value)}
+                    placeholder="0.00"
+                    required
+                  />
+                ) : (() => {
+                  const options = priceOptions.filter(p => p.type === formData.type);
+                  if (options.length === 0) {
+                    return (
+                      <div className="space-y-1">
+                        <Input
+                          id="value"
+                          type="number"
+                          step="0.01"
+                          value={formData.value}
+                          onChange={(e) => handleChange('value', e.target.value)}
+                          placeholder="0.00"
+                          required
+                        />
+                        <p className="text-xs text-amber-600">Tabela de preços não configurada — informe o valor manualmente.</p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <Select
+                      id="value"
+                      value={formData.value}
+                      onChange={(e) => handleChange('value', e.target.value)}
+                      required
+                    >
+                      <option value="">Selecione o serviço</option>
+                      {options.map(p => (
+                        <option key={p.id} value={String(p.price)}>
+                          {p.description} — {formatCurrency(p.price)}
+                        </option>
+                      ))}
+                    </Select>
+                  );
+                })()}
               </div>
 
               <div className="space-y-2">
@@ -330,7 +370,10 @@ export function NewRequest({ onCancel }: NewRequestProps) {
                       name="type"
                       value="montagem"
                       checked={formData.type === 'montagem'}
-                      onChange={(e) => handleChange('type', e.target.value)}
+                      onChange={(e) => {
+                        handleChange('type', e.target.value);
+                        handleChange('value', '');
+                      }}
                       className="w-4 h-4 text-blue-600"
                     />
                     <span className="text-sm">Montagem (Laboratório)</span>
@@ -341,7 +384,10 @@ export function NewRequest({ onCancel }: NewRequestProps) {
                       name="type"
                       value="motoboy"
                       checked={formData.type === 'motoboy'}
-                      onChange={(e) => handleChange('type', e.target.value)}
+                      onChange={(e) => {
+                        handleChange('type', e.target.value);
+                        handleChange('value', '');
+                      }}
                       className="w-4 h-4 text-blue-600"
                     />
                     <span className="text-sm">Entrega Motoboy</span>
@@ -352,7 +398,10 @@ export function NewRequest({ onCancel }: NewRequestProps) {
                       name="type"
                       value="sedex"
                       checked={formData.type === 'sedex'}
-                      onChange={(e) => handleChange('type', e.target.value)}
+                      onChange={(e) => {
+                        handleChange('type', e.target.value);
+                        handleChange('value', '');
+                      }}
                       className="w-4 h-4 text-blue-600"
                     />
                     <span className="text-sm">Sedex</span>
