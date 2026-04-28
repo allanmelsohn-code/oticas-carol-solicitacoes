@@ -152,6 +152,10 @@ export const approvals = {
       body: JSON.stringify({ requestId, action, observation }),
     });
   },
+
+  async get(requestId: string) {
+    return apiCall(`/approvals/${requestId}`);
+  },
 };
 
 // Reports API
