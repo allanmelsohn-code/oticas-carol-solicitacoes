@@ -702,11 +702,18 @@ app.post("/make-server-b2c42f95/approvals", async (c) => {
 app.get("/make-server-b2c42f95/approvals/:requestId", async (c) => {
   try {
     const user = await authenticateRequest(c);
-    if (!user) {
-      return c.json({ error: 'Não autenticado' }, 401);
-    }
+    if (!user) return c.json({ error: 'Não autenticado' }, 401);
 
     const requestId = c.req.param('requestId');
+
+    // Scope check: store users may only see approvals for their own requests
+    if (user.role === 'store') {
+      const request = await kv.get(`request:${requestId}`);
+      if (!request || user.storeId !== request.storeId) {
+        return c.json({ error: 'Não encontrado' }, 404);
+      }
+    }
+
     const approval = await kv.get(`approval:${requestId}`);
 
     if (!approval) {
