@@ -1,14 +1,15 @@
 // src/app/components/admin/UserAdminPage.tsx
 import { useEffect, useState } from 'react';
-import { Plus, Users, Home } from 'lucide-react';
+import { Plus, Users, Home, Tag } from 'lucide-react';
 import { users as usersApi, stores as storesApi } from '../../../lib/api';
+import { ServicePricePage } from './ServicePricePage';
 import type { User, Store } from '../../../types';
 import { UserTable } from './UserTable';
 import { UserForm } from './UserForm';
 import { StoreTable } from './StoreTable';
 import { StoreForm } from './StoreForm';
 
-type Tab = 'users' | 'stores';
+type Tab = 'users' | 'stores' | 'prices';
 
 interface UserAdminPageProps {
   currentUser: User;
@@ -124,21 +125,23 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
           <h1 className="text-base font-bold text-gray-900">Administração</h1>
           <p className="text-xs text-gray-400 mt-0.5">Gerencie usuários e lojas do sistema</p>
         </div>
-        <button
-          onClick={() => {
-            if (tab === 'users') {
-              setEditingUser(null);
-              setShowUserForm(true);
-            } else {
-              setEditingStore(null);
-              setShowStoreForm(true);
-            }
-          }}
-          className="flex items-center gap-1.5 text-xs px-3 py-2 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-        >
-          <Plus size={13} />
-          {tab === 'users' ? 'Novo usuário' : 'Nova loja'}
-        </button>
+        {tab !== 'prices' && (
+          <button
+            onClick={() => {
+              if (tab === 'users') {
+                setEditingUser(null);
+                setShowUserForm(true);
+              } else {
+                setEditingStore(null);
+                setShowStoreForm(true);
+              }
+            }}
+            className="flex items-center gap-1.5 text-xs px-3 py-2 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+          >
+            <Plus size={13} />
+            {tab === 'users' ? 'Novo usuário' : 'Nova loja'}
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -156,6 +159,13 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
         >
           <Home size={13} />
           Lojas
+        </button>
+        <button
+          className={`${tabBase} ${tab === 'prices' ? tabActive : tabInactive}`}
+          onClick={() => setTab('prices')}
+        >
+          <Tag size={13} />
+          Preços
         </button>
       </div>
 
@@ -214,6 +224,11 @@ export function UserAdminPage({ currentUser }: UserAdminPageProps) {
             readOnly={true}
           />
         </div>
+      )}
+
+      {/* Prices tab */}
+      {!loading && tab === 'prices' && (
+        <ServicePricePage />
       )}
     </div>
   );
