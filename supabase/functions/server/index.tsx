@@ -13,6 +13,15 @@ const app = new Hono();
 app.use('*', cors());
 app.use('*', logger(console.log));
 
+// Global Error Handler
+app.onError((err, c) => {
+  console.error('🔥 Global Error:', err);
+  return c.json({ 
+    error: `Erro no servidor: ${err.message}`,
+    stack: Deno.env.get('DEBUG') === 'true' ? err.stack : undefined 
+  }, 500);
+});
+
 // Initialize Supabase client
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
@@ -734,17 +743,19 @@ app.get("/make-server-b2c42f95/service-prices", async (c) => {
     let prices = await kv.getByPrefix('service-price:');
 
     if (typeFilter) {
-      prices = prices.filter((p: { type: string }) => p.type === typeFilter);
+      prices = prices.filter((p: any) => p?.type === typeFilter);
     }
 
-    prices.sort((a: { description: string }, b: { description: string }) =>
-      a.description.localeCompare(b.description)
-    );
+    prices.sort((a: any, b: any) => {
+      const descA = a?.description || '';
+      const descB = b?.description || '';
+      return descA.localeCompare(descB);
+    });
 
     return c.json({ prices });
   } catch (error) {
     console.log('Get service prices error:', error);
-    return c.json({ error: 'Failed to get service prices' }, 500);
+    return c.json({ error: `Erro interno no servidor: ${error.message}` }, 500);
   }
 });
 
@@ -773,7 +784,7 @@ app.post("/make-server-b2c42f95/service-prices", async (c) => {
     return c.json({ servicePrice }, 201);
   } catch (error) {
     console.log('Create service price error:', error);
-    return c.json({ error: 'Failed to create service price' }, 500);
+    return c.json({ error: `Erro ao criar preço: ${error.message}` }, 500);
   }
 });
 
@@ -808,7 +819,7 @@ app.put("/make-server-b2c42f95/service-prices/:id", async (c) => {
     return c.json({ servicePrice: updated });
   } catch (error) {
     console.log('Update service price error:', error);
-    return c.json({ error: 'Failed to update service price' }, 500);
+    return c.json({ error: `Erro ao atualizar preço: ${error.message}` }, 500);
   }
 });
 
@@ -1078,6 +1089,15 @@ app.post("/make-server-b2c42f95/setup", async (c) => {
       },
     ];
 
+    // Default service prices (assembly costs)
+    const defaultServicePrices = [
+      { description: 'MONTAGEM VS ARO FECHADO', price: 10.00, type: 'montagem' },
+      { description: 'MONTAGEM VS FIO DE NYLON', price: 12.00, type: 'montagem' },
+      { description: 'MONTAGEM VS ALTO INDICE', price: 20.00, type: 'montagem' },
+      { description: 'MONTAGEM VS BALLGRIFF', price: 25.00, type: 'montagem' },
+      { description: 'MONTAGEM MULTIFOCAL', price: 15.00, type: 'montagem' },
+    ];
+
     // Get existing users first
     const existingUsers = await kv.getByPrefix('user:');
     console.log('📋 Existing users:', existingUsers.length);
@@ -1125,6 +1145,21 @@ app.post("/make-server-b2c42f95/setup", async (c) => {
       } catch (err) {
         console.error('❌ Error creating store:', storeData.code, err);
         results.errors.push(`Store ${storeData.code}: ${err.message}`);
+      }
+    }
+
+    // Create default service prices
+    const existingPrices = await kv.getByPrefix('service-price:');
+    for (const priceData of defaultServicePrices) {
+      try {
+        const exists = existingPrices.some((p: any) => p.description === priceData.description && p.type === priceData.type);
+        if (!exists) {
+          const id = crypto.randomUUID();
+          await kv.set(`service-price:${id}`, { id, ...priceData });
+          console.log('✅ Service price created:', priceData.description);
+        }
+      } catch (err) {
+        console.error('❌ Error creating service price:', priceData.description, err);
       }
     }
 

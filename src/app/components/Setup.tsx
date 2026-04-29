@@ -119,6 +119,10 @@ export function Setup() {
                   <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span><strong>9 Lojas:</strong> Frei Caneca, Center 3, Villalobos, Vila Olímpia, Patio Paulista, Canário, Ibirapuera, Morumbi Town, Maracatins</span>
                 </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span><strong>Tabela de Preços:</strong> 5 serviços de montagem (Aro Fechado, Nylon, Alto Índice, Ballgriff, Multifocal)</span>
+                </li>
               </ul>
             </div>
 

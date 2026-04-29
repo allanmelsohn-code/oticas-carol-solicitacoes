@@ -192,7 +192,15 @@ export function ServicePricePage(_props: ServicePricePageProps) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</div>
+        <div className="flex items-center justify-between gap-3 text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          <span>{error}</span>
+          <button 
+            onClick={load}
+            className="px-2 py-1 bg-red-100 hover:bg-red-200 rounded transition-colors font-semibold"
+          >
+            Tentar novamente
+          </button>
+        </div>
       )}
       {loading ? (
         <div className="py-10 text-center text-sm text-gray-400">Carregando...</div>

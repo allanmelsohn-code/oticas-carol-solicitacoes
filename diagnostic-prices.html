@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Preços - Óticas Carol</title>
+    <style>
+        body { font-family: monospace; max-width: 900px; margin: 50px auto; padding: 20px; background: #f5f5f5; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; }
+        button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px; }
+        button:hover { background: #1d4ed8; }
+        .log { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 12px; line-height: 1.6; }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        .info { color: #60a5fa; }
+        input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔍 Diagnóstico de Tabela de Preços</h1>
+        
+        <p>Este arquivo ajuda a identificar por que a tabela de preços está falhando.</p>
+
+        <div style="margin-bottom: 20px;">
+            <label>Email:</label>
+            <input type="text" id="email" value="admin@oticascarol.com.br" />
+            
+            <label>Senha:</label>
+            <input type="password" id="password" value="admin123" />
+        </div>
+        
+        <button onclick="runDiagnostic()">🔍 Testar Preços</button>
+        <button onclick="clearLogs()">🗑️ Limpar Logs</button>
+    </div>
+
+    <div class="card">
+        <h3>📋 Logs de Diagnóstico</h3>
+        <div id="logs" class="log"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://vbqatwxsawkiilmsjvcn.supabase.co/functions/v1/make-server-b2c42f95';
+        const PUBLIC_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZicWF0d3hzYXdraWlsbXNqdmNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0NzYyNDQsImV4cCI6MjA1MzA1MjI0NH0.iG9xqTcK3AoSAQmK3KZZ8OIEGnMl1NzHVsHTpHvz9nE';
+
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logsDiv.innerHTML += `<div class="${className}">${new Date().toLocaleTimeString()} - ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+
+        async function runDiagnostic() {
+            clearLogs();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            log('🚀 Iniciando diagnóstico de preços...', 'info');
+
+            // Sign In first
+            log('🔐 Autenticando...', 'info');
+            let sessionId = null;
+            try {
+                const response = await fetch(`${API_BASE}/signin`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${PUBLIC_ANON_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    sessionId = data.sessionId;
+                    log('✅ Autenticado com sucesso!', 'success');
+                } else {
+                    log(`❌ Erro na autenticação: ${JSON.stringify(data)}`, 'error');
+                    return;
+                }
+            } catch (error) {
+                log(`❌ Erro no login: ${error.message}`, 'error');
+                return;
+            }
+
+            // Test Service Prices Endpoint
+            log('📋 Chamando GET /service-prices...', 'info');
+            try {
+                const response = await fetch(`${API_BASE}/service-prices`, {
+                    headers: { 
+                        'Authorization': `Bearer ${PUBLIC_ANON_KEY}`, 
+                        'X-Session-ID': sessionId 
+                    }
+                });
+
+                log(`📥 Status: ${response.status} ${response.statusText}`, 'info');
+                
+                const text = await response.text();
+                log(`📄 Resposta Bruta: ${text.substring(0, 500)}${text.length > 500 ? '...' : ''}`, 'info');
+
+                try {
+                    const data = JSON.parse(text);
+                    if (response.ok) {
+                        log(`✅ Preços carregados: ${data.prices?.length || 0} itens`, 'success');
+                        data.prices?.forEach(p => {
+                            log(`   - [${p.type}] ${p.description}: R$ ${p.price}`, 'info');
+                        });
+                    } else {
+                        log(`❌ Erro da API: ${data.error || JSON.stringify(data)}`, 'error');
+                    }
+                } catch (e) {
+                    log(`❌ Falha ao processar JSON: ${e.message}`, 'error');
+                    log('⚠️ A resposta do servidor não é um JSON válido.', 'error');
+                }
+            } catch (error) {
+                log(`❌ Erro na requisição: ${error.message}`, 'error');
+            }
+
+            log('🏁 Diagnóstico concluído!', 'success');
+        }
+    </script>
+</body>
+</html>
