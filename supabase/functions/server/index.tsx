@@ -1268,7 +1268,18 @@ app.post("/remove-fcm-token", async (c) => {
 
 Deno.serve((req) => {
   const url = new URL(req.url);
-  url.pathname = url.pathname.replace('/make-server-b2c42f95', '') || '/';
+  const functionName = 'make-server-b2c42f95';
+  
+  // Limpa o caminho para o Hono (remove /functions/v1/nome-da-funcao ou apenas /nome-da-funcao)
+  let path = url.pathname;
+  if (path.includes(functionName)) {
+    path = path.substring(path.indexOf(functionName) + functionName.length);
+  }
+  if (!path || path === '') path = '/';
+  
+  url.pathname = path;
+  console.log(`🌐 Routing: ${req.method} ${req.url} -> ${url.pathname}`);
+  
   return app.fetch(new Request(url.toString(), req));
 });
 
