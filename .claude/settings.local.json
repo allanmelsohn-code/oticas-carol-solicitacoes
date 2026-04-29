@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(gsd-map-codebase)",
+      "Bash(node *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(npx tsc *)",
+      "Bash(git push *)",
+      "Bash(supabase --version)",
+      "Bash(curl *)"
+    ]
+  }
+}
