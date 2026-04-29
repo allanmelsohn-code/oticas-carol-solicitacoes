@@ -1,7 +1,7 @@
 // Firebase Cloud Messaging - Push Notifications
 // This file handles sending push notifications via FCM
 
-import * as kv from './kv_store.tsx';
+import * as kv from './kv_store.ts';
 
 // FCM Server Key - deve ser configurado nas variáveis de ambiente
 // Obtenha em: Firebase Console > Project Settings > Cloud Messaging > Server Key

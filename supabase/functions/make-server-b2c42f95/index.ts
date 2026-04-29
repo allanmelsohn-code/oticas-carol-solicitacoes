@@ -2,7 +2,7 @@ import { Hono } from 'npm:hono@4.0.2';
 import { cors } from 'npm:hono/cors';
 import { logger } from 'npm:hono/logger';
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import * as kv from './kv_store.tsx';
+import * as kv from './kv_store.ts';
 import * as fcm from './fcm.ts';
 import type { User, Store, Request, Approval } from './types.ts';
 import { sendNewRequestEmail, sendApprovedEmail, sendRejectedEmail } from './email.ts';
