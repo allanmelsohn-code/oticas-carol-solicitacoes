@@ -55,14 +55,14 @@ async function getUser(authUserId: string, authUserEmail: string, authUserMetada
 }
 
 // Health check endpoint
-app.get("/make-server-b2c42f95/health", (c) => {
+app.get("/health", (c) => {
   return c.json({ status: "ok" });
 });
 
 // ===== AUTH ROUTES =====
 
 // Simple authentication - check credentials against fixed users
-app.post("/make-server-b2c42f95/signin", async (c) => {
+app.post("/signin", async (c) => {
   try {
     const { email, password } = await c.req.json();
 
@@ -106,7 +106,7 @@ app.post("/make-server-b2c42f95/signin", async (c) => {
 });
 
 // Validate session
-app.get("/make-server-b2c42f95/me", async (c) => {
+app.get("/me", async (c) => {
   try {
     const sessionId = c.req.header('X-Session-ID');
     
@@ -159,7 +159,7 @@ async function authenticateRequest(c: any): Promise<User | null> {
 // ===== STORES ROUTES =====
 
 // Get all stores
-app.get("/make-server-b2c42f95/stores", async (c) => {
+app.get("/stores", async (c) => {
   try {
     const stores = await kv.getByPrefix('store:');
     return c.json({ stores });
@@ -170,7 +170,7 @@ app.get("/make-server-b2c42f95/stores", async (c) => {
 });
 
 // Create store (admin only)
-app.post("/make-server-b2c42f95/stores", async (c) => {
+app.post("/stores", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -199,7 +199,7 @@ app.post("/make-server-b2c42f95/stores", async (c) => {
 // ===== USER MANAGEMENT ROUTES =====
 
 // Create new user (admin only)
-app.post("/make-server-b2c42f95/users", async (c) => {
+app.post("/users", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -259,7 +259,7 @@ app.post("/make-server-b2c42f95/users", async (c) => {
 });
 
 // Update user (admin only)
-app.put("/make-server-b2c42f95/users/:email", async (c) => {
+app.put("/users/:email", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -317,7 +317,7 @@ app.put("/make-server-b2c42f95/users/:email", async (c) => {
 });
 
 // Get all users (admin only)
-app.get("/make-server-b2c42f95/users", async (c) => {
+app.get("/users", async (c) => {
   try {
     console.log('📋 GET /users endpoint called');
     const sessionId = c.req.header('X-Session-ID');
@@ -349,7 +349,7 @@ app.get("/make-server-b2c42f95/users", async (c) => {
 });
 
 // Delete user (admin only)
-app.delete("/make-server-b2c42f95/users/:email", async (c) => {
+app.delete("/users/:email", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -385,7 +385,7 @@ app.delete("/make-server-b2c42f95/users/:email", async (c) => {
 // ===== REQUESTS ROUTES =====
 
 // Create new request
-app.post("/make-server-b2c42f95/requests", async (c) => {
+app.post("/requests", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -462,7 +462,7 @@ app.post("/make-server-b2c42f95/requests", async (c) => {
 });
 
 // Get all requests
-app.get("/make-server-b2c42f95/requests", async (c) => {
+app.get("/requests", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -490,7 +490,7 @@ app.get("/make-server-b2c42f95/requests", async (c) => {
 });
 
 // Get request by ID
-app.get("/make-server-b2c42f95/requests/:id", async (c) => {
+app.get("/requests/:id", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -516,7 +516,7 @@ app.get("/make-server-b2c42f95/requests/:id", async (c) => {
 });
 
 // Update request (only for pending requests by store users)
-app.put("/make-server-b2c42f95/requests/:id", async (c) => {
+app.put("/requests/:id", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -570,7 +570,7 @@ app.put("/make-server-b2c42f95/requests/:id", async (c) => {
 });
 
 // Delete request (only for pending requests by store users)
-app.delete("/make-server-b2c42f95/requests/:id", async (c) => {
+app.delete("/requests/:id", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -607,7 +607,7 @@ app.delete("/make-server-b2c42f95/requests/:id", async (c) => {
 // ===== APPROVAL ROUTES =====
 
 // Approve or reject request
-app.post("/make-server-b2c42f95/approvals", async (c) => {
+app.post("/approvals", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -708,7 +708,7 @@ app.post("/make-server-b2c42f95/approvals", async (c) => {
 });
 
 // Get approval for a specific request
-app.get("/make-server-b2c42f95/approvals/:requestId", async (c) => {
+app.get("/approvals/:requestId", async (c) => {
   try {
     const user = await authenticateRequest(c);
     if (!user) return c.json({ error: 'Não autenticado' }, 401);
@@ -734,7 +734,7 @@ app.get("/make-server-b2c42f95/approvals/:requestId", async (c) => {
 // ===== SERVICE PRICE ROUTES =====
 
 // Get all service prices (optionally filtered by type)
-app.get("/make-server-b2c42f95/service-prices", async (c) => {
+app.get("/service-prices", async (c) => {
   try {
     const user = await authenticateRequest(c);
     if (!user) return c.json({ error: 'Não autenticado' }, 401);
@@ -760,7 +760,7 @@ app.get("/make-server-b2c42f95/service-prices", async (c) => {
 });
 
 // Create service price (approver only)
-app.post("/make-server-b2c42f95/service-prices", async (c) => {
+app.post("/service-prices", async (c) => {
   try {
     const user = await authenticateRequest(c);
     if (!user) return c.json({ error: 'Não autenticado' }, 401);
@@ -789,7 +789,7 @@ app.post("/make-server-b2c42f95/service-prices", async (c) => {
 });
 
 // Update service price (approver only)
-app.put("/make-server-b2c42f95/service-prices/:id", async (c) => {
+app.put("/service-prices/:id", async (c) => {
   try {
     const user = await authenticateRequest(c);
     if (!user) return c.json({ error: 'Não autenticado' }, 401);
@@ -824,7 +824,7 @@ app.put("/make-server-b2c42f95/service-prices/:id", async (c) => {
 });
 
 // Delete service price (approver only)
-app.delete("/make-server-b2c42f95/service-prices/:id", async (c) => {
+app.delete("/service-prices/:id", async (c) => {
   try {
     const user = await authenticateRequest(c);
     if (!user) return c.json({ error: 'Não autenticado' }, 401);
@@ -847,7 +847,7 @@ app.delete("/make-server-b2c42f95/service-prices/:id", async (c) => {
 // ===== REPORTS ROUTES =====
 
 // Get monthly report
-app.get("/make-server-b2c42f95/reports/monthly", async (c) => {
+app.get("/reports/monthly", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -897,7 +897,7 @@ app.get("/make-server-b2c42f95/reports/monthly", async (c) => {
 
 // ===== DASHBOARD STATS =====
 
-app.get("/make-server-b2c42f95/stats", async (c) => {
+app.get("/stats", async (c) => {
   try {
     console.log('📊 Stats endpoint called');
     const user = await authenticateRequest(c);
@@ -949,7 +949,7 @@ app.get("/make-server-b2c42f95/stats", async (c) => {
 // ===== ADMIN ROUTES =====
 
 // Clear all requests and approvals (admin only)
-app.post("/make-server-b2c42f95/admin/clear-requests", async (c) => {
+app.post("/admin/clear-requests", async (c) => {
   try {
     const user = await authenticateRequest(c);
     
@@ -987,7 +987,7 @@ app.post("/make-server-b2c42f95/admin/clear-requests", async (c) => {
 
 // Setup route - creates default users and stores
 // This is a public endpoint with a master password for security
-app.post("/make-server-b2c42f95/setup", async (c) => {
+app.post("/setup", async (c) => {
   try {
     console.log('🚀 Setup endpoint called');
     
@@ -1235,7 +1235,7 @@ app.post("/make-server-b2c42f95/setup", async (c) => {
 // ===== FCM (PUSH NOTIFICATIONS) ROUTES =====
 
 // Save FCM token
-app.post("/make-server-b2c42f95/save-fcm-token", async (c) => {
+app.post("/save-fcm-token", async (c) => {
   try {
     const { userId, email, fcmToken, platform } = await c.req.json(); 
     if (!userId || !fcmToken) {
@@ -1251,7 +1251,7 @@ app.post("/make-server-b2c42f95/save-fcm-token", async (c) => {
 });
 
 // Remove FCM token
-app.post("/make-server-b2c42f95/remove-fcm-token", async (c) => {
+app.post("/remove-fcm-token", async (c) => {
   try {
     const { fcmToken } = await c.req.json(); 
     if (!fcmToken) {
@@ -1266,4 +1266,9 @@ app.post("/make-server-b2c42f95/remove-fcm-token", async (c) => {
   }
 });
 
-Deno.serve(app.fetch);
+Deno.serve((req) => {
+  const url = new URL(req.url);
+  url.pathname = url.pathname.replace('/make-server-b2c42f95', '') || '/';
+  return app.fetch(new Request(url.toString(), req));
+});
+
