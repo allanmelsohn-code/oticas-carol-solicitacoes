@@ -10,8 +10,12 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icon-192x192.png', 'icon-512x512.png'],
       manifest: {
+        lang: 'pt-BR',
         name: 'Óticas Carol',
         short_name: 'Óticas Carol',
         description: 'Gerenciamento de solicitações da Óticas Carol',
@@ -29,12 +33,14 @@ export default defineConfig({
             src: 'icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'any',
           },
         ],
       },
-      workbox: {
-        runtimeCaching: [],
+      injectManifest: {
+        globPatterns: [],
+        globIgnores: ['**/*'],
+        injectionPoint: undefined,
       },
     }),
   ],
